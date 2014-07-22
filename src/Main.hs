@@ -25,10 +25,10 @@ main = do
   putStrLn "Starting server..."
 
   -- HTTP server
-  _ <- forkIO $ simpleHTTP httpConf mainRoute --httpsForward
+  simpleHTTP httpConf mainRoute --httpsForward
 
   -- HTTPS server
-  simpleHTTPS httpsConf mainHttp
+  --simpleHTTPS httpsConf mainHttp
 
 mainHttp :: ServerPart Response
 mainHttp = do
