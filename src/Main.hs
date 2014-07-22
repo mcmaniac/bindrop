@@ -35,6 +35,7 @@ mainHttp = do
   _ <- compressedResponseFilter
   mainRoute
 
+{- disable SSL certs temporarily
 httpsForward :: ServerPart Response
 httpsForward = withHost $ \h -> uriRest $ \r -> do
 
@@ -43,7 +44,7 @@ httpsForward = withHost $ \h -> uriRest $ \r -> do
                        ++ r
 
   seeOther url (toResponse $ "Forwarding to: " ++ url ++ "\n")
-
+-}
 
 mainRoute :: ServerPart Response
 mainRoute = msum
