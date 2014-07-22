@@ -1,0 +1,7 @@
+dist/
+
+*.swp
+.hs_tags
+
+*.crt
+*.key
