@@ -13,13 +13,12 @@ index = baseHtml $ do
   H.title "asd"
   H.h1 "asd"
 
---  Practice with text only first:
   H.form ! enctype "multipart/form-data"
          ! action "/"
          ! A.method "post" $ do
-           H.label "String: " >> input ! type_ "text"
-                                       ! name "testString"
-                                       ! size "25"
+           H.label "Upload a file: " >> input ! A.type_ "file"
+                                              ! A.name "fileUpload"
+                                              ! A.size "50"
            input ! type_ "submit"
                  ! name "upload"
 

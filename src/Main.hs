@@ -8,6 +8,7 @@ import Happstack.Server.SimpleHTTPS
 import Happstack.Server.Compression
 
 import HTML.Index
+import HTML.Upload
 import qualified HTML.Error as Error
 
 httpConf :: Conf
@@ -59,13 +60,13 @@ mainRoute =
             notFound $ toResponse Error.notFound
           ]
 
--- 0 bytes for file requests to practice with text only
 myPolicy :: BodyPolicy
-myPolicy = (defaultBodyPolicy "/tmp/" 0 1000 1000)
+myPolicy = (defaultBodyPolicy "/tmp/" (10*10^6) 1000 1000)
 
 indexPart :: ServerPart Response
 indexPart =
   do method [GET, POST]
-     testString <- look "testString"
-     ok $ toResponse ("You typed: " ++ testString)
+     u <- lookFile "fileUpload"
+     --renameFile (tmpFile u) permanentName
+     ok $ toResponse $ upload u
 
