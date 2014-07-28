@@ -45,14 +45,27 @@ httpsForward = withHost $ \h -> uriRest $ \r -> do
   seeOther url (toResponse $ "Forwarding to: " ++ url ++ "\n")
 
 mainRoute :: ServerPart Response
-mainRoute = msum
-  [ do -- the "/" index page
-       nullDir
-       ok $ toResponse index
+mainRoute =
+  do decodeBody myPolicy
+     msum [ indexPart
+          , do -- the "/" index page
+            nullDir
+            ok $ toResponse index
 
-  , do -- server files from "/static/"
-       dir "static" $ serveDirectory DisableBrowsing [] "static"
+          , do -- server files from "/static/"
+            dir "static" $ serveDirectory DisableBrowsing [] "static"
 
-  , do -- anything else could not be found
-       notFound $ toResponse Error.notFound
-  ]
+          , do -- anything else could not be found
+            notFound $ toResponse Error.notFound
+          ]
+
+-- 0 bytes for file requests to practice with text only
+myPolicy :: BodyPolicy
+myPolicy = (defaultBodyPolicy "/tmp/" 0 1000 1000)
+
+indexPart :: ServerPart Response
+indexPart =
+  do method [GET, POST]
+     testString <- look "testString"
+     ok $ toResponse ("You typed: " ++ testString)
+
