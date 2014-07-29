@@ -13,8 +13,8 @@ upload :: (FilePath, FilePath, ContentType) -> Html
 upload fileUpload = baseHtml $ do
   H.title "File Information"
   mkBody fileUpload
-    where mkBody (tmpFile, uploadName, contentType) = do
-            H.p (H.toHtml $ "temp file: " ++ tmpFile)
+    where mkBody (fileLoc, uploadName, contentType) = do
+            H.p (H.toHtml $ "file location: " ++ fileLoc)
             H.p (H.toHtml $ "uploaded name: " ++ uploadName)
             H.p (H.toHtml $ "content type: " ++ show contentType)
 

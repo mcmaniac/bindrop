@@ -2,10 +2,13 @@ module Main where
 
 import Control.Concurrent
 import Control.Monad
+import Control.Monad.IO.Class
 
 import Happstack.Server
 import Happstack.Server.SimpleHTTPS
 import Happstack.Server.Compression
+
+import System.Directory (renameFile)
 
 import HTML.Index
 import HTML.Upload
@@ -67,6 +70,20 @@ indexPart :: ServerPart Response
 indexPart =
   do method [GET, POST]
      u <- lookFile "fileUpload"
-     --renameFile (tmpFile u) permanentName
-     ok $ toResponse $ upload u
+     liftIO $ renameFile (tmpFilePath u) ("/tmp/bindrop/" ++
+       tmpFileName u)
+     let v = updateFileInfo u
+     ok $ toResponse $ upload v
+
+tmpFilePath :: (FilePath, FilePath, ContentType) -> FilePath
+tmpFilePath (fp, _, _) = fp
+
+tmpFileName :: (FilePath, FilePath, ContentType) -> FilePath
+tmpFileName (_, name, _) = name
+
+updateFileInfo :: (FilePath, FilePath, ContentType) -> (FilePath, FilePath, ContentType)
+updateFileInfo (tmpPath, name, contentType) =
+  (("/tmp/bindrop/" ++ name)
+  , name
+  , contentType)
 
