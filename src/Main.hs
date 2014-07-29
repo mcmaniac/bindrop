@@ -70,7 +70,7 @@ indexPart :: ServerPart Response
 indexPart =
   do method [GET, POST]
      u <- lookFile "fileUpload"
-     liftIO $ renameFile (tmpFilePath u) ("/tmp/bindrop/" ++
+     liftIO $ renameFile (tmpFilePath u) (uploadDir ++
        tmpFileName u)
      let v = updateFileInfo u
      ok $ toResponse $ upload v
@@ -83,7 +83,10 @@ tmpFileName (_, name, _) = name
 
 updateFileInfo :: (FilePath, FilePath, ContentType) -> (FilePath, FilePath, ContentType)
 updateFileInfo (tmpPath, name, contentType) =
-  (("/tmp/bindrop/" ++ name)
+  ((uploadDir ++ name)
   , name
   , contentType)
+
+uploadDir :: FilePath
+uploadDir = "/tmp/bindrop/"
 
