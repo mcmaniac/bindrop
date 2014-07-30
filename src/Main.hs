@@ -24,6 +24,9 @@ httpsConf = nullTLSConf
   , tlsKey  = "nils.key"
   }
 
+uploadDir :: FilePath
+uploadDir = "/tmp/bindrop/"
+
 main :: IO ()
 main = do
   putStrLn "Starting server..."
@@ -86,7 +89,4 @@ updateFileInfo (tmpPath, name, contentType) =
   ((uploadDir ++ name)
   , name
   , contentType)
-
-uploadDir :: FilePath
-uploadDir = "/tmp/bindrop/"
 
