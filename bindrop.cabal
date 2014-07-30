@@ -20,6 +20,7 @@ executable bindrop
   -- other-modules:       
   -- other-extensions:    
   build-depends:       base >=4.6 && <4.8,
+                       transformers, directory,
                        blaze-html,
                        happstack-server, happstack-server-tls,
                        acid-state, ixset, safecopy
