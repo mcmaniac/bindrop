@@ -21,6 +21,7 @@ import Data.Time            ( UTCTime(..), getCurrentTime )
 
 data FileUpload = FileUpload { path :: FilePath
                              , name :: String
+                             , time :: UTCTime
                              } deriving (Eq, Ord, Show, Data, Typeable)
 
 $(deriveSafeCopy 0 'base ''FileUpload)
