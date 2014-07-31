@@ -4,7 +4,9 @@
 
 module UploadDB where
 
-import Control.Applicative  ( (<$>) )
+import Control.Applicative  ( (<$>), optional )
+import Control.Monad.State  ( get, put )
+import Control.Monad.Reader ( ask )
 import Data.Acid            ( AcidState, Query, Update
                             , makeAcidic, openLocalState )
 import Data.Acid.Advanced   ( query', update' )
@@ -54,7 +56,7 @@ instance Indexable FileUpload where
 
 data UploadDB =
   UploadDB { nextFileID :: FileID
-           , files :: IxSet FileUpload }
+           , files      :: IxSet FileUpload }
            deriving (Data, Typeable)
 
 $(deriveSafeCopy 0 'base ''UploadDB)
@@ -65,6 +67,17 @@ initialUploadDBState =
            , files      = empty }
 
 -- create a new empty file upload and add it to the DB
+newUpload :: Update UploadDB FileUpload
+newUpload = do f@UploadDB{..} <- get
+               let file = FileUpload { fileID = nextFileID
+                                     , path = ""
+                                     , name = Text.empty
+                                     }
+               put $ f { nextFileID = succ nextFileID
+                       , files      = IxSet.insert file files
+                       }
+               return file
 
 
 -- update a file upload in the DB by fileID
+
