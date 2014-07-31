@@ -12,6 +12,7 @@ import System.Directory (renameFile)
 
 import HTML.Index
 import HTML.Upload
+import UploadDB
 import qualified HTML.Error as Error
 
 httpConf :: Conf
