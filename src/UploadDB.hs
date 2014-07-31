@@ -19,7 +19,11 @@ import Data.Text.Lazy       ( toStrict )
 import qualified Data.Text as Text
 import Data.Time            ( UTCTime(..), getCurrentTime )
 
-data FileUpload = FileUpload { path :: FilePath
+newtype FileID = FileID {unFileID :: Integer}
+  deriving (Eq, Ord, Show, Data, Enum, Typeable, SafeCopy)
+
+data FileUpload = FileUpload { fileID :: FileID
+                             , path :: FilePath
                              , name :: Text
 --                             , time :: UTCTime
 --                             , tags :: [Text]
@@ -41,17 +45,26 @@ newtype UploadName = UploadName Text
 
 instance Indexable FileUpload where
   empty = ixSet
-    [ ixFun $ \bp -> [UploadPath $ path bp]
-    , ixFun $ \bp -> [UploadName $ name bp]
-    --, ixFun $ \bp -> [UploadTime $ time bp]
-    --, ixFun $ \bp -> map UploadTag (tags bp)
+    [ ixFun $ \fu -> [fileID fu]
+    , ixFun $ \fu -> [UploadPath $ path fu]
+    , ixFun $ \fu -> [UploadName $ name fu]
+    --, ixFun $ \fu -> [UploadTime $ time fu]
+    --, ixFun $ \fu -> map UploadTag (tags fu)
     ]
 
-data UploadDB = UploadDB { files :: IxSet FileUpload }
-  deriving (Data, Typeable)
+data UploadDB =
+  UploadDB { nextFileID :: FileID
+           , files :: IxSet FileUpload }
+           deriving (Data, Typeable)
 
 $(deriveSafeCopy 0 'base ''UploadDB)
 
 initialUploadDBState :: UploadDB
-initialUploadDBState = UploadDB { files = empty }
+initialUploadDBState =
+  UploadDB { nextFileID = FileID 1
+           , files      = empty }
 
+-- create a new empty file upload and add it to the DB
+
+
+-- update a file upload in the DB by fileID
