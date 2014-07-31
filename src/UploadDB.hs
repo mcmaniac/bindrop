@@ -80,4 +80,17 @@ newUpload = do f@UploadDB{..} <- get
 
 
 -- update a file upload in the DB by fileID
+updateUpload :: FileUpload -> Update UploadDB ()
+updateUpload updatedFile = do
+  f@UploadDB{..} <- get
+  put $ f { files =
+              IxSet.updateIx (fileID updatedFile) updatedFile files
+          }
 
+-- look up a file by id
+fileByID :: FileID -> Query UploadDB (Maybe FileUpload)
+fileByID fileId =
+  do UploadDB{..} <- ask
+     return $ getOne $ files @= fileId
+
+--TODO: Order by time using Proxy type
