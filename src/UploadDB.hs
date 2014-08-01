@@ -25,7 +25,7 @@ $(deriveSafeCopy 0 'base ''FileID)
 data FileUpload = FileUpload { _fileID :: FileID
                              , _fpath :: FilePath
                              , _fname :: String
---                             , time :: UTCTime
+--                             , _time :: UTCTime
 --                             , tags :: [String]
                              } deriving (Eq, Ord, Show, Data, Typeable)
 

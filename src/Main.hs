@@ -104,7 +104,7 @@ indexPart acid =
          [ do method POST
               let updatedFile = f & fpath .~ vPath
                                   & fname .~ vName
-              update' acid (UpdateUpload updatedFile)
+              _ <- update' acid (UpdateUpload updatedFile)
 
               ok $ toResponse $ upload v
          ]
