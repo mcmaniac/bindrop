@@ -7,6 +7,7 @@ import Control.Exception (bracket)
 
 import Data.Acid
 import Data.Acid.Local (createCheckpointAndClose)
+import Data.Acid.Advanced   ( query', update' )
 
 import Happstack.Server
 import Happstack.Server.SimpleHTTPS
@@ -62,7 +63,7 @@ httpsForward = withHost $ \h -> uriRest $ \r -> do
 mainRoute :: AcidState UploadDB -> ServerPart Response
 mainRoute acid =
   do decodeBody myPolicy
-     msum [ indexPart
+     msum [ indexPart acid
           , do -- the "/" index page
             nullDir
             ok $ toResponse index
@@ -77,25 +78,43 @@ mainRoute acid =
 myPolicy :: BodyPolicy
 myPolicy = (defaultBodyPolicy "/tmp/" (10*10^6) 1000 1000)
 
-indexPart :: ServerPart Response
-indexPart =
+indexPart :: AcidState UploadDB -> ServerPart Response
+indexPart acid =
   do method [GET, POST]
      u <- lookFile "fileUpload"
-     liftIO $ renameFile (tmpFilePath u) (uploadDir ++
-       tmpFileName u)
+     let uName = getFileName u
+     let uPath = getFilePath u
+     liftIO $ renameFile uPath (uploadDir ++ uName)
      let v = updateFileInfo u
-     --put acid stuff here
+     let vName = uName
+     let vPath = getFilePath v
+
      --TODO: extract content type and make it part of acid
-     ok $ toResponse $ upload v
+     --acid stuff here
+     --create a new one
+     file <- update' acid NewUpload
 
-tmpFilePath :: (FilePath, FilePath, ContentType) -> FilePath
-tmpFilePath (fp, _, _) = fp
+--find the fileID here and query the corresponding file
+--before going further
+     (Just f@(FileUpload{..})) -> msum
+       [ do method POST
+            let updatedFile = f { fpath = vPath, fname = vName }
+            update' acid (UpdateUpload updatedFile)
 
-tmpFileName :: (FilePath, FilePath, ContentType) -> FilePath
-tmpFileName (_, name, _) = name
+            ok $ toResponse $ upload v
+       ]
+
+getFilePath :: (FilePath, FilePath, ContentType) -> FilePath
+getFilePath (fp, _, _) = fp
+
+getFileName :: (FilePath, FilePath, ContentType) -> FilePath
+getFileName (_, name, _) = name
+
+--getFileContents :: (FilePath, FilePath, ContentType) -> FilePath
+--getFileContents (_, _, contents) =
 
 updateFileInfo :: (FilePath, FilePath, ContentType) -> (FilePath, FilePath, ContentType)
-updateFileInfo (tmpPath, name, contentType) =
+updateFileInfo (_, name, contentType) =
   ((uploadDir ++ name)
   , name
   , contentType)
