@@ -6,87 +6,70 @@ module UploadDB where
 
 import Control.Monad.State  ( get, put )
 import Control.Monad.Reader ( ask )
+import Control.Lens         ( (&), (^.), (%~) )
+import Control.Lens.TH      ( makeLenses )
 import Data.Acid            ( Query, Update
                             , makeAcidic )
 import Data.Data            ( Data, Typeable )
-import Data.IxSet           ( Indexable(..), IxSet(..), (@=)
-                            , Proxy(..), getOne, ixFun, ixSet )
+import Data.IxSet           ( Indexable(..), (@=), getOne
+                            , inferIxSet, noCalcs )
 import qualified Data.IxSet as IxSet
-import Data.SafeCopy        ( SafeCopy, base, deriveSafeCopy )
+import Data.SafeCopy        ( base, deriveSafeCopy )
 --import Data.Time            ( UTCTime(..), getCurrentTime )
 
 newtype FileID = FileID {unFileID :: Integer}
-  deriving (Eq, Ord, Show, Data, Enum, Typeable)
+  deriving (Eq, Ord, Show, Data, Enum, Typeable, Num)
 
 $(deriveSafeCopy 0 'base ''FileID)
 
-data FileUpload = FileUpload { fileID :: FileID
-                             , fpath :: FilePath
-                             , fname :: String
+data FileUpload = FileUpload { _fileID :: FileID
+                             , _fpath :: FilePath
+                             , _fname :: String
 --                             , time :: UTCTime
 --                             , tags :: [String]
                              } deriving (Eq, Ord, Show, Data, Typeable)
 
+$(makeLenses ''FileUpload)
+
 $(deriveSafeCopy 0 'base ''FileUpload)
 
-newtype UploadPath = UploadPath FilePath
-  deriving (Eq, Ord, Data, Typeable)
-
-newtype UploadName = UploadName String
-  deriving (Eq, Ord, Data, Typeable)
-
---newtype UploadTime = UploadTime UTCTime
---  deriving (Eq, Ord, Data, Typeable, SafeCopy)
-
---newtype UploadTag = UploadTag Text
---  deriving (Eq, Ord, Data, Typeable, SafeCopy)
-
-instance Indexable FileUpload where
-  empty = ixSet
-    [ ixFun $ \fu -> [fileID fu]
-    , ixFun $ \fu -> [UploadPath $ fpath fu]
-    , ixFun $ \fu -> [UploadName $ fname fu]
-    --, ixFun $ \fu -> [UploadTime $ time fu]
-    --, ixFun $ \fu -> map UploadTag (tags fu)
-    ]
+inferIxSet "FileDB" ''FileUpload 'noCalcs
+  [ ''FileID
+  , ''FilePath
+  , ''String
+  ]
 
 data UploadDB =
-  UploadDB { nextFileID :: FileID
-           , files      :: IxSet FileUpload }
+  UploadDB { _nextFileID :: FileID
+           , _files      :: FileDB }
            deriving (Data, Typeable)
+
+$(makeLenses ''UploadDB)
 
 $(deriveSafeCopy 0 'base ''UploadDB)
 
 initialUploadDBState :: UploadDB
-initialUploadDBState =
-  UploadDB { nextFileID = FileID 1
-           , files      = empty }
+initialUploadDBState = UploadDB (FileID 1) empty
 
 -- create a new empty file upload and add it to the DB
 newUpload :: Update UploadDB FileUpload
-newUpload = do f@UploadDB{..} <- get
-               let file = FileUpload { fileID = nextFileID
-                                     , fpath = ""
-                                     , fname = ""
-                                     }
-               put $ f { nextFileID = succ nextFileID
-                       , files      = IxSet.insert file files
-                       }
+newUpload = do f <- get
+               let file = FileUpload (f ^. nextFileID) "" ""
+               put $ f & nextFileID %~ succ
+                       & files      %~ IxSet.insert file
                return file
 
 -- update a file upload in the DB by fileID
 updateUpload :: FileUpload -> Update UploadDB ()
 updateUpload updatedFile = do
-  f@UploadDB{..} <- get
-  put $ f { files =
-              IxSet.updateIx (fileID updatedFile) updatedFile files
-          }
+  f <- get
+  put $ f & files %~ IxSet.updateIx (updatedFile ^. fileID) updatedFile
 
 -- look up a file by id
 fileByID :: FileID -> Query UploadDB (Maybe FileUpload)
 fileByID fileId =
-  do UploadDB{..} <- ask
-     return $ getOne $ files @= fileId
+  do db <- ask
+     return $ getOne $ (db ^. files) @= fileId
 
 --TODO: Order by time using Proxy type
 
@@ -95,4 +78,3 @@ $(makeAcidic ''UploadDB
   , 'updateUpload
   , 'fileByID
   ])
-
