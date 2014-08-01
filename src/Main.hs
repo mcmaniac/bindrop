@@ -4,6 +4,8 @@ import Control.Concurrent
 import Control.Monad
 import Control.Monad.IO.Class
 
+import Data.Acid
+
 import Happstack.Server
 import Happstack.Server.SimpleHTTPS
 import Happstack.Server.Compression
@@ -91,3 +93,9 @@ updateFileInfo (tmpPath, name, contentType) =
   , name
   , contentType)
 
+{-new :: AcidState UploadDB -> ServerPart Response
+new acid = do
+  method POST
+  file <- update' acid
+  TODO after altering the routing
+-}

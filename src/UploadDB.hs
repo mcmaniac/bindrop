@@ -78,7 +78,6 @@ newUpload = do f@UploadDB{..} <- get
                        }
                return file
 
-
 -- update a file upload in the DB by fileID
 updateUpload :: FileUpload -> Update UploadDB ()
 updateUpload updatedFile = do
@@ -94,3 +93,10 @@ fileByID fileId =
      return $ getOne $ files @= fileId
 
 --TODO: Order by time using Proxy type
+
+$(makeAcidic ''UploadDB
+  [ 'newUpload
+  , 'updateUpload
+  , 'fileByID
+  ])
+
