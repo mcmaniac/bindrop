@@ -4,21 +4,15 @@
 
 module UploadDB where
 
-import Control.Applicative  ( (<$>), optional )
 import Control.Monad.State  ( get, put )
 import Control.Monad.Reader ( ask )
-import Data.Acid            ( AcidState, Query, Update
-                            , makeAcidic, openLocalState )
-import Data.Acid.Advanced   ( query', update' )
-import Data.Acid.Local      ( createCheckpointAndClose )
+import Data.Acid            ( Query, Update
+                            , makeAcidic )
 import Data.Data            ( Data, Typeable )
 import Data.IxSet           ( Indexable(..), IxSet(..), (@=)
                             , Proxy(..), getOne, ixFun, ixSet )
 import qualified Data.IxSet as IxSet
 import Data.SafeCopy        ( SafeCopy, base, deriveSafeCopy )
-import Data.Text            ( Text )
-import Data.Text.Lazy       ( toStrict )
-import qualified Data.Text as Text
 --import Data.Time            ( UTCTime(..), getCurrentTime )
 
 newtype FileID = FileID {unFileID :: Integer}
@@ -26,9 +20,9 @@ newtype FileID = FileID {unFileID :: Integer}
 
 data FileUpload = FileUpload { fileID :: FileID
                              , fpath :: FilePath
-                             , fname :: Text
+                             , fname :: String
 --                             , time :: UTCTime
---                             , tags :: [Text]
+--                             , tags :: [String]
                              } deriving (Eq, Ord, Show, Data, Typeable)
 
 $(deriveSafeCopy 0 'base ''FileUpload)
@@ -36,7 +30,7 @@ $(deriveSafeCopy 0 'base ''FileUpload)
 newtype UploadPath = UploadPath FilePath
   deriving (Eq, Ord, Data, Typeable, SafeCopy)
 
-newtype UploadName = UploadName Text
+newtype UploadName = UploadName String
   deriving (Eq, Ord, Data, Typeable, SafeCopy)
 
 --newtype UploadTime = UploadTime UTCTime
@@ -71,7 +65,7 @@ newUpload :: Update UploadDB FileUpload
 newUpload = do f@UploadDB{..} <- get
                let file = FileUpload { fileID = nextFileID
                                      , fpath = ""
-                                     , fname = Text.empty
+                                     , fname = ""
                                      }
                put $ f { nextFileID = succ nextFileID
                        , files      = IxSet.insert file files

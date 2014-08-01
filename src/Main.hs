@@ -1,3 +1,5 @@
+{-# LANGUAGE RecordWildCards #-}
+
 module Main where
 
 import Control.Concurrent
@@ -93,16 +95,18 @@ indexPart acid =
      --acid stuff here
      --create a new one
      file <- update' acid NewUpload
+     let fID = fileID file
+     --edit the newly created file upload
+     mFile <- query' acid (FileByID fID)
+     --add case of Nothing
+     case mFile of
+       (Just f@(FileUpload{..})) -> msum
+         [ do method POST
+              let updatedFile = f { fpath = vPath, fname = vName }
+              update' acid (UpdateUpload updatedFile)
 
---find the fileID here and query the corresponding file
---before going further
-     (Just f@(FileUpload{..})) -> msum
-       [ do method POST
-            let updatedFile = f { fpath = vPath, fname = vName }
-            update' acid (UpdateUpload updatedFile)
-
-            ok $ toResponse $ upload v
-       ]
+              ok $ toResponse $ upload v
+         ]
 
 getFilePath :: (FilePath, FilePath, ContentType) -> FilePath
 getFilePath (fp, _, _) = fp
