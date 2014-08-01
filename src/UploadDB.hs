@@ -19,14 +19,14 @@ import Data.SafeCopy        ( SafeCopy, base, deriveSafeCopy )
 import Data.Text            ( Text )
 import Data.Text.Lazy       ( toStrict )
 import qualified Data.Text as Text
-import Data.Time            ( UTCTime(..), getCurrentTime )
+--import Data.Time            ( UTCTime(..), getCurrentTime )
 
 newtype FileID = FileID {unFileID :: Integer}
   deriving (Eq, Ord, Show, Data, Enum, Typeable, SafeCopy)
 
 data FileUpload = FileUpload { fileID :: FileID
-                             , path :: FilePath
-                             , name :: Text
+                             , fpath :: FilePath
+                             , fname :: Text
 --                             , time :: UTCTime
 --                             , tags :: [Text]
                              } deriving (Eq, Ord, Show, Data, Typeable)
@@ -48,8 +48,8 @@ newtype UploadName = UploadName Text
 instance Indexable FileUpload where
   empty = ixSet
     [ ixFun $ \fu -> [fileID fu]
-    , ixFun $ \fu -> [UploadPath $ path fu]
-    , ixFun $ \fu -> [UploadName $ name fu]
+    , ixFun $ \fu -> [UploadPath $ fpath fu]
+    , ixFun $ \fu -> [UploadName $ fname fu]
     --, ixFun $ \fu -> [UploadTime $ time fu]
     --, ixFun $ \fu -> map UploadTag (tags fu)
     ]
@@ -70,8 +70,8 @@ initialUploadDBState =
 newUpload :: Update UploadDB FileUpload
 newUpload = do f@UploadDB{..} <- get
                let file = FileUpload { fileID = nextFileID
-                                     , path = ""
-                                     , name = Text.empty
+                                     , fpath = ""
+                                     , fname = Text.empty
                                      }
                put $ f { nextFileID = succ nextFileID
                        , files      = IxSet.insert file files

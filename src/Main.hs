@@ -3,8 +3,10 @@ module Main where
 import Control.Concurrent
 import Control.Monad
 import Control.Monad.IO.Class
+import Control.Exception (bracket)
 
 import Data.Acid
+import Data.Acid.Local (createCheckpointAndClose)
 
 import Happstack.Server
 import Happstack.Server.SimpleHTTPS
@@ -28,22 +30,25 @@ httpsConf = nullTLSConf
   }
 
 uploadDir :: FilePath
-uploadDir = "/tmp/bindrop/"
+uploadDir = "/home/kvitebjorn/Documents/bindrop/files/"
 
 main :: IO ()
 main = do
   putStrLn "Starting server..."
 
   -- HTTP server
-  simpleHTTP httpConf mainRoute --httpsForward
+  bracket (openLocalState initialUploadDBState)
+          (createCheckpointAndClose)
+          (\acid ->
+            simpleHTTP httpConf (mainRoute acid)) --httpsForward
 
   -- HTTPS server
   --simpleHTTPS httpsConf mainHttp
 
-mainHttp :: ServerPart Response
-mainHttp = do
+mainHttp :: AcidState UploadDB -> ServerPart Response
+mainHttp acid = do
   _ <- compressedResponseFilter
-  mainRoute
+  mainRoute acid
 
 httpsForward :: ServerPart Response
 httpsForward = withHost $ \h -> uriRest $ \r -> do
@@ -54,8 +59,8 @@ httpsForward = withHost $ \h -> uriRest $ \r -> do
 
   seeOther url (toResponse $ "Forwarding to: " ++ url ++ "\n")
 
-mainRoute :: ServerPart Response
-mainRoute =
+mainRoute :: AcidState UploadDB -> ServerPart Response
+mainRoute acid =
   do decodeBody myPolicy
      msum [ indexPart
           , do -- the "/" index page
@@ -79,6 +84,8 @@ indexPart =
      liftIO $ renameFile (tmpFilePath u) (uploadDir ++
        tmpFileName u)
      let v = updateFileInfo u
+     --put acid stuff here
+     --TODO: extract content type and make it part of acid
      ok $ toResponse $ upload v
 
 tmpFilePath :: (FilePath, FilePath, ContentType) -> FilePath
@@ -93,9 +100,3 @@ updateFileInfo (tmpPath, name, contentType) =
   , name
   , contentType)
 
-{-new :: AcidState UploadDB -> ServerPart Response
-new acid = do
-  method POST
-  file <- update' acid
-  TODO after altering the routing
--}
