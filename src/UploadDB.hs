@@ -16,7 +16,9 @@ import Data.SafeCopy        ( SafeCopy, base, deriveSafeCopy )
 --import Data.Time            ( UTCTime(..), getCurrentTime )
 
 newtype FileID = FileID {unFileID :: Integer}
-  deriving (Eq, Ord, Show, Data, Enum, Typeable, SafeCopy)
+  deriving (Eq, Ord, Show, Data, Enum, Typeable)
+
+$(deriveSafeCopy 0 'base ''FileID)
 
 data FileUpload = FileUpload { fileID :: FileID
                              , fpath :: FilePath
@@ -28,10 +30,10 @@ data FileUpload = FileUpload { fileID :: FileID
 $(deriveSafeCopy 0 'base ''FileUpload)
 
 newtype UploadPath = UploadPath FilePath
-  deriving (Eq, Ord, Data, Typeable, SafeCopy)
+  deriving (Eq, Ord, Data, Typeable)
 
 newtype UploadName = UploadName String
-  deriving (Eq, Ord, Data, Typeable, SafeCopy)
+  deriving (Eq, Ord, Data, Typeable)
 
 --newtype UploadTime = UploadTime UTCTime
 --  deriving (Eq, Ord, Data, Typeable, SafeCopy)
