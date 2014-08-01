@@ -2,10 +2,10 @@
 
 module Main where
 
-import Control.Concurrent
 import Control.Monad
 import Control.Monad.IO.Class
 import Control.Exception (bracket)
+import Control.Lens.Operators
 
 import Data.Acid
 import Data.Acid.Local (createCheckpointAndClose)
@@ -78,7 +78,7 @@ mainRoute acid =
           ]
 
 myPolicy :: BodyPolicy
-myPolicy = (defaultBodyPolicy "/tmp/" (10*10^6) 1000 1000)
+myPolicy = (defaultBodyPolicy "/tmp/" (10*10^(6 :: Int)) 1000 1000)
 
 indexPart :: AcidState UploadDB -> ServerPart Response
 indexPart acid =
@@ -95,18 +95,20 @@ indexPart acid =
      --acid stuff here
      --create a new one
      file <- update' acid NewUpload
-     let fID = fileID file
+     let fID = file ^. fileID
      --edit the newly created file upload
      mFile <- query' acid (FileByID fID)
      --add case of Nothing
      case mFile of
        (Just f@(FileUpload{..})) -> msum
          [ do method POST
-              let updatedFile = f { fpath = vPath, fname = vName }
+              let updatedFile = f & fpath .~ vPath
+                                  & fname .~ vName
               update' acid (UpdateUpload updatedFile)
 
               ok $ toResponse $ upload v
          ]
+       _ -> mzero -- FIXME
 
 getFilePath :: (FilePath, FilePath, ContentType) -> FilePath
 getFilePath (fp, _, _) = fp
