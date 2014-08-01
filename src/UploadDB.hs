@@ -1,5 +1,5 @@
 {-# LANGUAGE DeriveDataTypeable, GeneralizedNewtypeDeriving,
-  TemplateHaskell, TypeFamilies, RecordWildCards,
+  TemplateHaskell, TypeFamilies,
   OverloadedStrings #-}
 
 module UploadDB where
