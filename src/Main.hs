@@ -15,8 +15,6 @@ import Happstack.Server
 import Happstack.Server.SimpleHTTPS
 import Happstack.Server.Compression
 
-import System.Directory (renameFile)
-
 import HTML.Index
 import HTML.Upload
 import FileUtils
@@ -88,11 +86,10 @@ indexPart acid =
      let uName = getFileName u
      let uPath = getFilePath u
      newName <- liftIO $ moveToRandomFile uploadDir 11 uPath
-     let v = updateFileInfo u newName
      let vName = uName
-     let vPath = getFilePath v
-
+     let vPath = newName
      --TODO: extract content type and make it part of acid
+
      --acid stuff here
      --create a new one
      file <- update' acid NewUpload
@@ -107,7 +104,10 @@ indexPart acid =
                                   & fname .~ vName
               _ <- update' acid (UpdateUpload updatedFile)
 
-              ok $ toResponse $ upload v
+              --TODO: routing for download with random name
+              --provide a link to /f/randomNameHere in Upload.hs
+              --then /f/randomNameHere should give you the file
+              ok $ toResponse $ upload updatedFile
          ]
        _ -> mzero -- FIXME
 
@@ -119,13 +119,4 @@ getFileName (_, name, _) = name
 
 --getFileContents :: (FilePath, FilePath, ContentType) -> FilePath
 --getFileContents (_, _, contents) =
-
-updateFileInfo
-  :: (FilePath, FilePath, ContentType)
-  -> String
-  -> (FilePath, FilePath, ContentType)
-updateFileInfo (_, name, contentType) randomName =
-  ((uploadDir ++ randomName)
-  , name
-  , contentType)
 
