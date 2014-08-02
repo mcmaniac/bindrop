@@ -25,6 +25,6 @@ moveToRandomFile dir len file = do
   gen <- newStdGen
   let new_file = file & directory .~ dir
                       & filename .~ randomString len gen
-  -- renameFile file new_file
+  renameFile file new_file
   return new_file
 

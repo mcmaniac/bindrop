@@ -19,6 +19,7 @@ import System.Directory (renameFile)
 
 import HTML.Index
 import HTML.Upload
+import FileUtils
 import UploadDB
 import qualified HTML.Error as Error
 
@@ -86,8 +87,8 @@ indexPart acid =
      u <- lookFile "fileUpload"
      let uName = getFileName u
      let uPath = getFilePath u
-     liftIO $ renameFile uPath (uploadDir ++ uName)
-     let v = updateFileInfo u
+     newName <- liftIO $ moveToRandomFile uploadDir 11 uPath
+     let v = updateFileInfo u newName
      let vName = uName
      let vPath = getFilePath v
 
@@ -119,9 +120,12 @@ getFileName (_, name, _) = name
 --getFileContents :: (FilePath, FilePath, ContentType) -> FilePath
 --getFileContents (_, _, contents) =
 
-updateFileInfo :: (FilePath, FilePath, ContentType) -> (FilePath, FilePath, ContentType)
-updateFileInfo (_, name, contentType) =
-  ((uploadDir ++ name)
+updateFileInfo
+  :: (FilePath, FilePath, ContentType)
+  -> String
+  -> (FilePath, FilePath, ContentType)
+updateFileInfo (_, name, contentType) randomName =
+  ((uploadDir ++ randomName)
   , name
   , contentType)
 
