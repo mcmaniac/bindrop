@@ -23,8 +23,9 @@ newtype FileID = FileID {unFileID :: Integer}
 $(deriveSafeCopy 0 'base ''FileID)
 
 data FileUpload = FileUpload { _fileID :: FileID
-                             , _fpath :: FilePath
-                             , _fname :: String
+                             , _fpath :: FilePath --path on server disk
+                             , _fname :: String  --original uploaded name
+                             , _sfname :: String --random name on server disk
 --                             , _time :: UTCTime
 --                             , tags :: [String]
                              } deriving (Eq, Ord, Show, Data, Typeable)
@@ -36,6 +37,7 @@ $(deriveSafeCopy 0 'base ''FileUpload)
 inferIxSet "FileDB" ''FileUpload 'noCalcs
   [ ''FileID
   , ''FilePath
+  , ''String
   , ''String
   ]
 
@@ -54,7 +56,7 @@ initialUploadDBState = UploadDB (FileID 1) empty
 -- create a new empty file upload and add it to the DB
 newUpload :: Update UploadDB FileUpload
 newUpload = do f <- get
-               let file = FileUpload (f ^. nextFileID) "" ""
+               let file = FileUpload (f ^. nextFileID) "" "" ""
                put $ f & nextFileID %~ succ
                        & files      %~ IxSet.insert file
                return file
@@ -71,10 +73,16 @@ fileByID fileId =
   do db <- ask
      return $ getOne $ (db ^. files) @= fileId
 
---TODO: Order by time using Proxy type
+-- look up a file by name
+fileBySName :: String -> Query UploadDB (Maybe FileUpload)
+fileBySName name =
+  do db <- ask
+     return $ getOne $ (db ^. files) @= name
 
 $(makeAcidic ''UploadDB
   [ 'newUpload
   , 'updateUpload
   , 'fileByID
+  , 'fileBySName
   ])
+

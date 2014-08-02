@@ -71,7 +71,7 @@ mainRoute acid =
             ok $ toResponse index
 
           , do -- to download
-            dir "f" $ path $ \fileName -> ok $ toResponse $ download fileName
+            dir "f" $ path $ \fileName -> fpart acid fileName
 
           , do -- server files from "/static/"
             dir "static" $ serveDirectory DisableBrowsing [] "static"
@@ -92,6 +92,7 @@ indexPart acid =
      newName <- liftIO $ moveToRandomFile uploadDir 11 uPath
      let vName = uName
      let vPath = newName
+     let vSName = drop (length uploadDir) vPath
      --TODO: extract content type and make it part of acid
 
      --acid stuff here
@@ -104,11 +105,12 @@ indexPart acid =
      case mFile of
        (Just f@(FileUpload{..})) -> msum
          [ do method POST
-              let updatedFile = f & fpath .~ vPath
-                                  & fname .~ vName
+              let updatedFile = f & fpath  .~ vPath
+                                  & fname  .~ vName
+                                  & sfname .~ vSName
               _ <- update' acid (UpdateUpload updatedFile)
 
-              ok $ toResponse $ upload updatedFile uploadDir
+              ok $ toResponse $ upload updatedFile
          ]
        _ -> mzero -- FIXME
 
@@ -120,4 +122,12 @@ getFileName (_, name, _) = name
 
 --getFileContents :: (FilePath, FilePath, ContentType) -> FilePath
 --getFileContents (_, _, contents) =
+
+fpart :: AcidState UploadDB -> String -> ServerPart Response
+fpart acid s = do
+  file <- query' acid (FileBySName s)
+  case file of
+    (Just FileUpload{..}) -> do
+      ok $ toResponse $ fmap (download s) file
+    _ -> mzero
 
