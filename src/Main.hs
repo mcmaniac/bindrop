@@ -17,6 +17,7 @@ import Happstack.Server.Compression
 
 import HTML.Index
 import HTML.Upload
+import HTML.Download
 import FileUtils
 import UploadDB
 import qualified HTML.Error as Error
@@ -69,6 +70,9 @@ mainRoute acid =
             nullDir
             ok $ toResponse index
 
+          , do -- to download
+            dir "f" $ path $ \fileName -> ok $ toResponse $ download fileName
+
           , do -- server files from "/static/"
             dir "static" $ serveDirectory DisableBrowsing [] "static"
 
@@ -104,9 +108,6 @@ indexPart acid =
                                   & fname .~ vName
               _ <- update' acid (UpdateUpload updatedFile)
 
-              --TODO: routing for download with random name
-              --provide a link to /f/randomNameHere in Upload.hs
-              --then /f/randomNameHere should give you the file
               ok $ toResponse $ upload updatedFile
          ]
        _ -> mzero -- FIXME
