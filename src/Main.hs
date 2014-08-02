@@ -108,7 +108,7 @@ indexPart acid =
                                   & fname .~ vName
               _ <- update' acid (UpdateUpload updatedFile)
 
-              ok $ toResponse $ upload updatedFile
+              ok $ toResponse $ upload updatedFile uploadDir
          ]
        _ -> mzero -- FIXME
 
