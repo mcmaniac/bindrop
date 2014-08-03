@@ -19,10 +19,8 @@ upload f = baseHtml $ do
             let filePath = file ^. fpath
             let fileName = file ^. fname
             let infoLink = "localhost:8082/f/" ++ file ^. sfname
-            let dlLink   = "localhost:8082/s/" ++ file ^. sfname
             H.p (H.toHtml $ "file location: " ++ filePath)
             H.p (H.toHtml $ "uploaded name: " ++ fileName)
             --H.p (H.toHtml $ "content type: " ++ show contentType)
             H.p (H.toHtml $ "link to file info: " ++ infoLink)
-            H.p (H.toHtml $ "download link: " ++ dlLink)
 

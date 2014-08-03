@@ -17,7 +17,10 @@ viewDownload file = baseHtml $ do
   let filename = file ^. fname
   let filepath = file ^. fpath
   let sfilename = file ^. sfname
+  let dlLink   = "localhost:8082/s/" ++ file ^. sfname
+
   H.p (H.toHtml $ "Original file name: " ++ filename)
   H.p (H.toHtml $ "File name on server: " ++ sfilename)
   H.p (H.toHtml $ "File path: "          ++ filepath)
+  H.p (H.toHtml $ "download link: " ++ dlLink)
 
