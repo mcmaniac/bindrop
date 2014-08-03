@@ -14,7 +14,6 @@ import Data.Acid.Advanced   ( query', update' )
 import Happstack.Server
 import Happstack.Server.SimpleHTTPS
 import Happstack.Server.Compression
-import Happstack.Server.FileServe
 
 import HTML.Index
 import HTML.Upload
@@ -131,17 +130,17 @@ fpart :: AcidState UploadDB -> String -> ServerPart Response
 fpart acid s = do
   file <- query' acid (FileBySName s)
   case file of
-    (Just FileUpload{..}) -> do
-      ok $ toResponse $ fmap viewDownload file
+    (Just file) -> do
+      ok $ toResponse $ viewDownload file
     _ -> mzero
 
 --serve the file response to dir "s"
 spart :: AcidState UploadDB -> String -> ServerPart Response
 spart acid s = do
-  file <- query' acid (FileBySName s)
-  case file of
-    (Just FileUpload{..}) -> do
-      let path = file ^. fpath
-      serveFile (guessContentTypeM mimeTypes) path
+  dlfile <- query' acid (FileBySName s)
+  case dlfile of
+    (Just dlfile) -> do
+      let filepath = dlfile ^. fpath
+      serveFile (guessContentTypeM mimeTypes) filepath
     _ -> mzero --FIXME
 
