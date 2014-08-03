@@ -26,8 +26,6 @@ data FileUpload = FileUpload { _fileID :: FileID
                              , _fpath :: FilePath --path on server disk
                              , _fname :: String  --original uploaded name
                              , _sfname :: String --random name on server disk
---                             , _time :: UTCTime
---                             , tags :: [String]
                              } deriving (Eq, Ord, Show, Data, Typeable)
 
 $(makeLenses ''FileUpload)

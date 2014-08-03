@@ -14,6 +14,7 @@ import Data.Acid.Advanced   ( query', update' )
 import Happstack.Server
 import Happstack.Server.SimpleHTTPS
 import Happstack.Server.Compression
+import Happstack.Server.FileServe
 
 import HTML.Index
 import HTML.Upload
@@ -70,8 +71,11 @@ mainRoute acid =
             nullDir
             ok $ toResponse index
 
-          , do -- to download
+          , do -- to view download info
             dir "f" $ path $ \fileName -> fpart acid fileName
+
+          , do -- to download
+            dir "s" $ path $ \fileName -> spart acid fileName
 
           , do -- server files from "/static/"
             dir "static" $ serveDirectory DisableBrowsing [] "static"
@@ -128,6 +132,16 @@ fpart acid s = do
   file <- query' acid (FileBySName s)
   case file of
     (Just FileUpload{..}) -> do
-      ok $ toResponse $ fmap (download s) file
+      ok $ toResponse $ fmap viewDownload file
     _ -> mzero
+
+--serve the file response to dir "s"
+spart :: AcidState UploadDB -> String -> ServerPart Response
+spart acid s = do
+  file <- query' acid (FileBySName s)
+  case file of
+    (Just FileUpload{..}) -> do
+      let path = file ^. fpath
+      serveFile (guessContentTypeM mimeTypes) path
+    _ -> mzero --FIXME
 
