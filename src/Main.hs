@@ -73,7 +73,7 @@ mainRoute acid =
           , do -- to view download info
             dir "f" $ path $ \fileName -> fpart acid fileName
 
-          , do -- to download
+          , do -- to download:
             dir "s" $ path $ \fileName -> spart acid fileName
 
           , do -- server files from "/static/"
@@ -141,6 +141,10 @@ spart acid s = do
   case dlfile of
     (Just dlfile) -> do
       let filepath = dlfile ^. fpath
-      serveFile (guessContentTypeM mimeTypes) filepath
+      let trueName = dlfile ^. fname
+      response <- serveFile (guessContentTypeM mimeTypes) filepath
+      return $ setHeader "Content-Disposition"
+        ("attachment; filename=\"" ++ trueName ++ "\"")
+        response
     _ -> mzero --FIXME
 
