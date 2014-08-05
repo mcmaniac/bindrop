@@ -22,7 +22,7 @@ executable bindrop
   build-depends:       base >=4.6 && <4.8,
                        transformers, directory, mtl,
                        blaze-html,
-                       happstack-server, happstack-server-tls,
+                       happstack-server, random,
                        acid-state, ixset, safecopy,
                        lens
   hs-source-dirs:      src
