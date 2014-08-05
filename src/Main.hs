@@ -12,7 +12,7 @@ import Data.Acid.Local (createCheckpointAndClose)
 import Data.Acid.Advanced   ( query', update' )
 
 import Happstack.Server
---import Happstack.Server.SimpleHTTPS
+import Happstack.Server.SimpleHTTPS
 import Happstack.Server.Compression
 
 import HTML.Index
@@ -25,13 +25,13 @@ import qualified HTML.Error as Error
 httpConf :: Conf
 httpConf = nullConf { port = 8082 }
 
-{-httpsConf :: TLSConf
+httpsConf :: TLSConf
 httpsConf = nullTLSConf
   { tlsPort = 8083
   , tlsCert = "nils.cc.crt"
   , tlsKey  = "nils.key"
   }
--}
+
 
 uploadDir :: FilePath
 uploadDir = "/home/kvitebjorn/Documents/bindrop/files/"
@@ -54,14 +54,14 @@ mainHttp acid = do
   _ <- compressedResponseFilter
   mainRoute acid
 
-{-httpsForward :: ServerPart Response
+httpsForward :: ServerPart Response
 httpsForward = withHost $ \h -> uriRest $ \r -> do
 
   let url = "https://" ++ takeWhile (':' /=) h ++ ":"
                        ++ show (tlsPort httpsConf)
                        ++ r
   seeOther url (toResponse $ "Forwarding to: " ++ url ++ "\n")
--}
+
 
 mainRoute :: AcidState UploadDB -> ServerPart Response
 mainRoute acid =
