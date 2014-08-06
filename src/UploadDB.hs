@@ -8,14 +8,13 @@ import Control.Monad.State  ( get, put )
 import Control.Monad.Reader ( ask )
 import Control.Lens         ( (&), (^.), (%~) )
 import Control.Lens.TH      ( makeLenses )
-import Data.Acid            ( Query, Update
-                            , makeAcidic )
+import Data.Acid
 import Data.Data            ( Data, Typeable )
 import Data.IxSet           ( Indexable(..), (@=), getOne
-                            , inferIxSet, noCalcs )
+                            , inferIxSet, noCalcs, toDescList)
 import qualified Data.IxSet as IxSet
 import Data.SafeCopy        ( base, deriveSafeCopy )
---import Data.Time            ( UTCTime(..), getCurrentTime )
+import Data.Time            ( UTCTime(..) )
 
 newtype FileID = FileID {unFileID :: Integer}
   deriving (Eq, Ord, Show, Data, Enum, Typeable, Num)
@@ -26,6 +25,7 @@ data FileUpload = FileUpload { _fileID :: FileID
                              , _fpath :: FilePath --path on server disk
                              , _fname :: String  --original uploaded name
                              , _sfname :: String --random name on server disk
+                             , _uploadTime :: UTCTime
                              } deriving (Eq, Ord, Show, Data, Typeable)
 
 $(makeLenses ''FileUpload)
@@ -37,6 +37,7 @@ inferIxSet "FileDB" ''FileUpload 'noCalcs
   , ''FilePath
   , ''String
   , ''String
+  , ''UTCTime
   ]
 
 data UploadDB =
@@ -52,12 +53,12 @@ initialUploadDBState :: UploadDB
 initialUploadDBState = UploadDB (FileID 1) empty
 
 -- create a new empty file upload and add it to the DB
-newUpload :: Update UploadDB FileUpload
-newUpload = do f <- get
-               let file = FileUpload (f ^. nextFileID) "" "" ""
-               put $ f & nextFileID %~ succ
-                       & files      %~ IxSet.insert file
-               return file
+newUpload :: UTCTime -> Update UploadDB FileUpload
+newUpload t = do f <- get
+                 let file = FileUpload (f ^. nextFileID) "" "" "" t
+                 put $ f & nextFileID %~ succ
+                         & files      %~ IxSet.insert file
+                 return file
 
 -- update a file upload in the DB by fileID
 updateUpload :: FileUpload -> Update UploadDB ()
@@ -83,4 +84,9 @@ $(makeAcidic ''UploadDB
   , 'fileByID
   , 'fileBySName
   ])
+
+-- get a list of the 20 most recent uploads
+mostRecentUploads :: (Typeable a, Indexable a) => IxSet.IxSet a -> [a]
+mostRecentUploads acid = take 20 $ toDescList
+  (IxSet.Proxy :: IxSet.Proxy UTCTime) acid
 

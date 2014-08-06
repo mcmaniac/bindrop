@@ -17,12 +17,13 @@ viewDownload file = baseHtml $ do
   let filename = file ^. fname
   let filepath = file ^. fpath
   let sfilename = file ^. sfname
+  let fileTime = file ^. uploadTime
   let dlLink   = "/s/" ++ file ^. sfname
 
-  H.p (H.toHtml $ "Original file name: " ++ filename)
-  H.p (H.toHtml $ "File name on server: " ++ sfilename)
-  H.p (H.toHtml $ "File path: "          ++ filepath)
-
+  H.p (H.toHtml $ "Original file name: "   ++ filename)
+  H.p (H.toHtml $ "File name on server: "  ++ sfilename)
+  H.p (H.toHtml $ "File path: "            ++ filepath)
+  H.p (H.toHtml $ "Uploaded at: "          ++ show fileTime)
   p $ do "Click "
          a ! href (toValue dlLink) $ "here"
          " to download the file."

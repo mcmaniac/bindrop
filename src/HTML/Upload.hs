@@ -18,9 +18,10 @@ upload f = baseHtml $ do
     where mkBody file = do
             let filePath = file ^. fpath
             let fileName = file ^. fname
-            let infoLink = "localhost:8082/f/" ++ file ^. sfname
-            H.p (H.toHtml $ "file location: " ++ filePath)
-            H.p (H.toHtml $ "uploaded name: " ++ fileName)
-            --H.p (H.toHtml $ "content type: " ++ show contentType)
+            let fileTime = file ^. uploadTime
+            let infoLink = "localhost:8082/f/"    ++ file ^. sfname
+            H.p (H.toHtml $ "file location: "     ++ filePath)
+            H.p (H.toHtml $ "uploaded name: "     ++ fileName)
+            H.p (H.toHtml $ "time of upload: "    ++ show fileTime)
             H.p (H.toHtml $ "link to file info: " ++ infoLink)
 
