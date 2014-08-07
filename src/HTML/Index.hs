@@ -10,7 +10,7 @@ import HTML.Base
 
 index :: Html -> Html
 index mostRecentUploadList = baseHtml $ do
-  H.title "asd"
+  H.title "bindrop"
   H.h1 "New Upload:"
 
   H.form ! enctype "multipart/form-data"
@@ -22,6 +22,6 @@ index mostRecentUploadList = baseHtml $ do
            input ! type_ "submit"
                  ! name "upload"
   H.br
-  H.h2 "Recent Uploads:"
+  H.h1 "Recent Uploads:"
   mostRecentUploadList
 
