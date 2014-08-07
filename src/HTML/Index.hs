@@ -8,10 +8,10 @@ import Text.Blaze.Html5.Attributes as A
 
 import HTML.Base
 
-index :: Html
-index = baseHtml $ do
+index :: Html -> Html
+index mostRecentUploadList = baseHtml $ do
   H.title "asd"
-  H.h1 "asd"
+  H.h1 "New Upload:"
 
   H.form ! enctype "multipart/form-data"
          ! action "/"
@@ -21,4 +21,7 @@ index = baseHtml $ do
                                               ! A.size "50"
            input ! type_ "submit"
                  ! name "upload"
+  H.br
+  H.h2 "Recent Uploads:"
+  mostRecentUploadList
 

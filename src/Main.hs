@@ -93,9 +93,9 @@ myPolicy = (defaultBodyPolicy "/tmp/" (10*10^(6 :: Int)) 1000 1000)
 indexMostRecent :: AcidState UploadDB -> ServerPart Response
 indexMostRecent acid = do
   now <- liftIO $ getCurrentTime
-  mostRecent <- query' acid (mostRecentUploads now)
-  ok $ toResponse $
-    mapM_ recentFile mostRecent
+  mostRecent <- query' acid (MostRecentUploads now)
+  ok $ toResponse $ baseHtml $ do
+    index $ mapM_ recentFile mostRecent
 
 indexPart :: AcidState UploadDB -> ServerPart Response
 indexPart acid =
