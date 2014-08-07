@@ -13,10 +13,11 @@ recentFile :: FileUpload -> Html
 recentFile file = toHtml $ do
   let fileName = file ^. fname
   let fileTime = file ^. uploadTime
-  let infoLink = "localhost:8082/f/"    ++ file ^. sfname
+  let dlLink   = "/s/" ++ file ^. sfname
+  let infoLink = "localhost:8082/f/" ++ file ^. sfname
 
-  H.br
-  H.p (H.toHtml $ "uploaded name: "     ++ fileName)
+  H.p $ do a ! href (toValue dlLink) $ H.toHtml fileName
   H.p (H.toHtml $ "time of upload: "    ++ show fileTime)
   H.p (H.toHtml $ "link to file info: " ++ infoLink)
+  H.br
 
