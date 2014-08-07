@@ -3,7 +3,6 @@
 module HTML.Upload where
 
 import Control.Lens.Operators
---import Happstack.Server (ContentType)
 import Text.Blaze.Html
 import Text.Blaze.Html5 as H
 import Text.Blaze.Html5.Attributes as A

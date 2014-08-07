@@ -16,7 +16,9 @@ import Happstack.Server
 import Happstack.Server.SimpleHTTPS
 import Happstack.Server.Compression
 
+import HTML.Base
 import HTML.Index
+import HTML.File
 import HTML.Upload
 import HTML.Download
 import FileUtils
@@ -70,7 +72,7 @@ mainRoute acid =
      msum [ indexPart acid
           , do -- the "/" index page
             nullDir
-            ok $ toResponse index
+            indexMostRecent acid
 
           , do -- to view download info
             dir "f" $ path $ \fileName -> fpart acid fileName
@@ -87,6 +89,13 @@ mainRoute acid =
 
 myPolicy :: BodyPolicy
 myPolicy = (defaultBodyPolicy "/tmp/" (10*10^(6 :: Int)) 1000 1000)
+
+indexMostRecent :: AcidState UploadDB -> ServerPart Response
+indexMostRecent acid = do
+  now <- liftIO $ getCurrentTime
+  mostRecent <- query' acid (mostRecentUploads now)
+  ok $ toResponse $
+    mapM_ recentFile mostRecent
 
 indexPart :: AcidState UploadDB -> ServerPart Response
 indexPart acid =

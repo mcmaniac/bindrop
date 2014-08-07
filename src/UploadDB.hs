@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveDataTypeable, GeneralizedNewtypeDeriving,
   TemplateHaskell, TypeFamilies,
-  OverloadedStrings #-}
+  OverloadedStrings, RecordWildCards #-}
 
 module UploadDB where
 
@@ -10,7 +10,7 @@ import Control.Lens         ( (&), (^.), (%~) )
 import Control.Lens.TH      ( makeLenses )
 import Data.Acid
 import Data.Data            ( Data, Typeable )
-import Data.IxSet           ( Indexable(..), (@=), getOne
+import Data.IxSet           ( Indexable(..), (@=), (@<), getOne
                             , inferIxSet, noCalcs, toDescList)
 import qualified Data.IxSet as IxSet
 import Data.SafeCopy        ( base, deriveSafeCopy )
@@ -78,15 +78,22 @@ fileBySName name =
   do db <- ask
      return $ getOne $ (db ^. files) @= name
 
+-- get a list of the 20 most recent uploads
+mostRecentUploads :: UTCTime -> Query UploadDB [FileUpload]
+mostRecentUploads now = do
+  db <- ask
+  let files' =
+        take 20 $
+        toDescList
+        (IxSet.Proxy :: IxSet.Proxy UTCTime) $
+        (db ^. files) @< now
+  return files'
+
 $(makeAcidic ''UploadDB
   [ 'newUpload
   , 'updateUpload
   , 'fileByID
   , 'fileBySName
+  , 'mostRecentUploads
   ])
-
--- get a list of the 20 most recent uploads
-mostRecentUploads :: (Typeable a, Indexable a) => IxSet.IxSet a -> [a]
-mostRecentUploads acid = take 20 $ toDescList
-  (IxSet.Proxy :: IxSet.Proxy UTCTime) acid
 
