@@ -1,17 +1,32 @@
 h1 {
-  font-family: Consolas;
+  font-family: 'Ubuntu', Consolas;
   font-size:   32px;
   color:       DimGray;
 }
 
 h2 {
-  font-family: Consolas;
+  font-family: 'Ubuntu', Consolas;
   font-size:   18px;
   color:       Gray;
 }
+
 span {
-  font-family: Consolas;
+  font-family: 'Ubuntu', Consolas;
   font-size:   32px;
   color:       DarkRed;
+}
+
+body {
+  margin:      0;
+  padding:     0;
+  background:  #fff;
+  color:       #666;
+  font-size:   12pt;
+  font-family: sans-serif;
+}
+
+a {
+  color:           DarkRed;
+  text-decoration: none;
 }
 
