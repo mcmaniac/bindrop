@@ -16,7 +16,7 @@ htmlHeader title cssFiles scripts =
 
   H.head $ do
     H.title . toHtml $
-      maybe "nils.cc" ("nils.cc - " ++) title
+      maybe "bindrop" ("bindrop - " ++) title
 
     -- load javascript
     forM_ scripts $ \s ->

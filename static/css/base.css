@@ -1,0 +1,17 @@
+h1 {
+  font-family: Consolas;
+  font-size:   32px;
+  color:       DimGray;
+}
+
+h2 {
+  font-family: Consolas;
+  font-size:   18px;
+  color:       Gray;
+}
+span {
+  font-family: Consolas;
+  font-size:   32px;
+  color:       DarkRed;
+}
+

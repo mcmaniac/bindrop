@@ -11,7 +11,11 @@ import HTML.Base
 index :: Html -> Html
 index mostRecentUploadList = baseHtml $ do
   H.title "bindrop"
-  H.h1 "New Upload:"
+  H.h1 $ do
+    "bindrop "
+    H.span $ ":: AcidState UploadDB"
+
+  H.h2 "New Upload:"
 
   H.form ! enctype "multipart/form-data"
          ! action "/"
@@ -22,6 +26,6 @@ index mostRecentUploadList = baseHtml $ do
            input ! type_ "submit"
                  ! name "upload"
   H.br
-  H.h1 "Recent Uploads:"
+  H.h2 "Recent Uploads:"
   mostRecentUploadList
 

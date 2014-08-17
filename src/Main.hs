@@ -35,9 +35,8 @@ httpsConf = nullTLSConf
   , tlsKey  = "nils.key"
   }
 
-
 uploadDir :: FilePath
-uploadDir = "/home/kvitebjorn/Documents/bindrop/files/"
+uploadDir = "files/"
 
 main :: IO ()
 main = do
