@@ -8,17 +8,21 @@ import Text.Blaze.Html5 as H
 import Text.Blaze.Html5.Attributes as A
 
 import HTML.Base
+import HTML.Frames
 import UploadDB
 
 viewDownload :: FileUpload -> Html
 viewDownload file = baseHtml $ do
-  H.title "Download"
+  H.header $ do
+    mainHeader
+    H.title "Download"
 
   let filename = file ^. fname
   let filepath = file ^. fpath
   let sfilename = file ^. sfname
   let fileTime = file ^. uploadTime
   let dlLink   = "/s/" ++ file ^. sfname
+
   H.body $ do
     H.ul ! A.id "menu" $ do
       H.li $ H.a ! A.href "/" $ "Home"

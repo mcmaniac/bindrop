@@ -8,17 +8,22 @@ import Text.Blaze.Html5 as H
 import Text.Blaze.Html5.Attributes as A
 
 import HTML.Base
+import HTML.Frames
 import UploadDB
 
 upload :: FileUpload -> Html
 upload f = baseHtml $ do
-  H.title "File Information"
+  H.header $ do
+    mainHeader
+    H.title "File Information"
+
   mkBody f
     where mkBody file = do
             let filePath = file ^. fpath
             let fileName = file ^. fname
             let fileTime = file ^. uploadTime
             let infoLink = "localhost:8082/f/"    ++ file ^. sfname
+
             H.body $ do
               H.ul ! A.id "menu" $ do
                 H.li $ H.a ! A.href "/" $ "Home"
