@@ -1,6 +1,7 @@
 h1 {
   font-family: 'Ubuntu', Consolas;
   font-size:   32px;
+  text-align:  center;
   color:       DimGray;
 }
 
@@ -28,5 +29,19 @@ body {
 a {
   color:           DarkRed;
   text-decoration: none;
+}
+
+header {
+  margin:    100px auto 40px;
+  width:     750px;
+  font-size: 20pt;
+}
+
+header p#info {
+  font-family: 'Ubuntu', Consolas;
+  font-size:   12px;
+  text-align:  center;
+  color:       #666;
+  width:       750px;
 }
 

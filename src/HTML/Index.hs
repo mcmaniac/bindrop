@@ -7,15 +7,13 @@ import Text.Blaze.Html5 as H
 import Text.Blaze.Html5.Attributes as A
 
 import HTML.Base
+import HTML.Frames
 
 index :: Html -> Html
 index mostRecentUploadList = baseHtml $ do
   H.title "bindrop"
+  H.header $ mainHeader
   H.body $ do
-    H.h1 $ do
-      "bindrop "
-      H.span $ ":: AcidState UploadDB"
-
     H.ul ! A.id "menu" $ do
       H.li $ H.a ! A.href "/" $ "Home"
       H.li $ H.a ! A.href "/a" $ "About"
