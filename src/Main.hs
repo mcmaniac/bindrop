@@ -109,7 +109,7 @@ indexPart acid =
      --TODO: extract content type and make it part of acid
 
      --acid stuff here
-     --create a new one
+     --create new
      t <- liftIO $ getCurrentTime
 
      file <- update' acid (NewUpload t)
