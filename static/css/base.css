@@ -46,20 +46,19 @@ header p#info {
 }
 
 #mainMenu {
-  float: left;
-  border: 1px solid;
-  border-radius: 5px;
+  float:            left;
+  border-radius:    5px;
   background-color: #666;
-  display:     inline;
-  position:    fixed;
-  margin:      20px 0px 0px 20px;
-  padding-right: 35px;
-  box-shadow: 3px 3px 10px 10px #444;
+  position:         fixed;
+  margin:           20px 0px 0px 20px;
+  padding-right:    35px;
+  box-shadow:       3px 3px 10px #444;
+  vertical-align:   middle;
 }
 
 #menu {
   list-style-type: none;
-  vertical-align: center;
+  vertical-align:  center;
 }
 
 #menu li {
