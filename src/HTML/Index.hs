@@ -14,21 +14,21 @@ index mostRecentUploadList = baseHtml $ do
   H.title "bindrop"
   H.header $ mainHeader
   H.body $ do
-    H.ul ! A.id "menu" $ do
-      H.li $ H.a ! A.href "/" $ "Home"
-      H.li $ H.a ! A.href "/a" $ "About"
+    mainMenu
+    H.div ! A.id "upload" $ do
+      H.h2 "New Upload:"
 
-    H.h2 "New Upload:"
+      H.form ! enctype "multipart/form-data"
+             ! action "/"
+             ! A.method "post" $ do
+               H.label "Upload a file: " >> input ! A.type_ "file"
+                                                  ! A.name "fileUpload"
+                                                  ! A.size "50"
+               input ! type_ "submit"
+                     ! name "upload"
 
-    H.form ! enctype "multipart/form-data"
-           ! action "/"
-           ! A.method "post" $ do
-             H.label "Upload a file: " >> input ! A.type_ "file"
-                                                ! A.name "fileUpload"
-                                                ! A.size "50"
-             input ! type_ "submit"
-                   ! name "upload"
-    H.br
-    H.h2 "Recent Uploads:"
-    mostRecentUploadList
+    H.div ! A.id "recent" $ do
+      H.br
+      H.h2 "Recent Uploads:"
+      mostRecentUploadList
 

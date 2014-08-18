@@ -45,3 +45,21 @@ header p#info {
   width:       750px;
 }
 
+#mainMenu {
+  display:     inline;
+  position:    absolute;
+  margin:      0px 0px 0px 20px;
+}
+
+#upload {
+  display:     inline;
+  position:    absolute;
+  margin:      0px 0px 0px 200px;
+}
+
+#recent {
+  display:     inline;
+  position:    absolute;
+  margin:      100px 0px 0px 200px;
+}
+
