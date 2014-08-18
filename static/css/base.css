@@ -22,7 +22,7 @@ body {
   padding:     0;
   background:  #fff;
   color:       #666;
-  font-size:   12pt;
+  font-size:   11pt;
   font-family: sans-serif;
 }
 
@@ -46,19 +46,34 @@ header p#info {
 }
 
 #mainMenu {
+  float: left;
+  border: 1px solid;
+  border-radius: 5px;
+  background-color: #666;
   display:     inline;
-  position:    absolute;
-  margin:      0px 0px 0px 20px;
+  position:    fixed;
+  margin:      20px 0px 0px 20px;
+  padding-right: 35px;
+  box-shadow: 3px 3px 10px 10px #444;
+}
+
+#menu {
+  list-style-type: none;
+  vertical-align: center;
+}
+
+#menu li {
+  text-align: center;
+}
+
+#menu li a {
+  color: #ccc;
 }
 
 #new-upload {
   display:           inline;
   position:          absolute;
   margin:            0px 0px 0px 200px;
-  border-left-style: solid;
-  border-bottom-style: solid;
-  border-color:      #666;
-  border-width:      1px;
   padding-left:      10px;
   padding-bottom:    15px;
   padding-right:     32px;
@@ -68,9 +83,6 @@ header p#info {
   display:           inline;
   position:          absolute;
   margin:            75px 0px 0px 200px;
-  border-left-style: solid;
-  border-width:      1px;
-  border-color:      #666;
   padding-left:      10px;
 }
 
@@ -78,10 +90,5 @@ header p#info {
   display:  inline;
   position: absolute;
   margin:   0px 0px 0px 200px;
-}
-
-hr {
-  color:  #666;
-  height: 1px;
 }
 
