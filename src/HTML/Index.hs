@@ -15,7 +15,8 @@ index mostRecentUploadList = baseHtml $ do
   H.header $ mainHeader
   H.body $ do
     mainMenu
-    H.div ! A.id "upload" $ do
+
+    H.div ! A.id "new-upload" $ do
       H.h2 "New Upload:"
 
       H.form ! enctype "multipart/form-data"
