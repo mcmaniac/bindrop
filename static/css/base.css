@@ -91,3 +91,9 @@ header p#info {
   margin:   0px 0px 0px 200px;
 }
 
+#about {
+  display: inline;
+  position: absolute;
+  margin: 0px 0px 0px 200px;
+}
+

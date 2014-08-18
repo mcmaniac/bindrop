@@ -16,6 +16,7 @@ import Happstack.Server
 import Happstack.Server.SimpleHTTPS
 import Happstack.Server.Compression
 
+import HTML.About
 import HTML.Base
 import HTML.Index
 import HTML.File
@@ -78,6 +79,9 @@ mainRoute acid =
 
           , do -- to download:
             dir "s" $ path $ \fileName -> spart acid fileName
+
+          , do -- about page
+            dir "a" $ ok $ toResponse $ about
 
           , do -- server files from "/static/"
             dir "static" $ serveDirectory DisableBrowsing [] "static"
