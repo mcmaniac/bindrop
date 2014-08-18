@@ -13,8 +13,7 @@ import UploadDB
 
 upload :: FileUpload -> Html
 upload f = baseHtml $ do
-  H.header $ do
-    mainHeader
+  H.head $ do
     H.title "File Information"
 
   mkBody f
@@ -25,6 +24,7 @@ upload f = baseHtml $ do
             let infoLink = "localhost:8082/f/"    ++ file ^. sfname
 
             H.body $ do
+              H.header $ mainHeader
               mainMenu
               H.div ! A.id "file-info" $ do
                 H.p (H.toHtml $ "file location: "     ++ filePath)

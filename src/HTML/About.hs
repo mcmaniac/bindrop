@@ -11,4 +11,9 @@ import HTML.Frames
 
 about :: Html -> Html
 about = baseHtml $ do
+  H.head $ do
+    H.title "About"
+  H.body $ do
+    H.header $ mainHeader
+    mainMenu
 

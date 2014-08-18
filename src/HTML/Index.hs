@@ -11,9 +11,10 @@ import HTML.Frames
 
 index :: Html -> Html
 index mostRecentUploadList = baseHtml $ do
-  H.title "bindrop"
-  H.header $ mainHeader
+  H.head $ do
+    H.title "bindrop"
   H.body $ do
+    H.header $ mainHeader
     mainMenu
 
     H.div ! A.id "new-upload" $ do

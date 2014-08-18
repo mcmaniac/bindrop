@@ -13,8 +13,7 @@ import UploadDB
 
 viewDownload :: FileUpload -> Html
 viewDownload file = baseHtml $ do
-  H.header $ do
-    mainHeader
+  H.head $ do
     H.title "Download"
 
   let filename = file ^. fname
@@ -24,6 +23,7 @@ viewDownload file = baseHtml $ do
   let dlLink   = "/s/" ++ file ^. sfname
 
   H.body $ do
+    H.header $ mainHeader
     mainMenu
     H.div ! A.id "file-info" $ do
       H.p (H.toHtml $ "Original file name: "   ++ filename)
