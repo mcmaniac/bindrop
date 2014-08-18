@@ -26,8 +26,9 @@ upload f = baseHtml $ do
 
             H.body $ do
               mainMenu
-              H.p (H.toHtml $ "file location: "     ++ filePath)
-              H.p (H.toHtml $ "uploaded name: "     ++ fileName)
-              H.p (H.toHtml $ "time of upload: "    ++ show fileTime)
-              H.p (H.toHtml $ "link to file info: " ++ infoLink)
+              H.div ! A.id "file-info" $ do
+                H.p (H.toHtml $ "file location: "     ++ filePath)
+                H.p (H.toHtml $ "uploaded name: "     ++ fileName)
+                H.p (H.toHtml $ "time of upload: "    ++ show fileTime)
+                H.p (H.toHtml $ "link to file info: " ++ infoLink)
 

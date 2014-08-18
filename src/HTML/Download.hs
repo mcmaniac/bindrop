@@ -25,11 +25,12 @@ viewDownload file = baseHtml $ do
 
   H.body $ do
     mainMenu
-    H.p (H.toHtml $ "Original file name: "   ++ filename)
-    H.p (H.toHtml $ "File name on server: "  ++ sfilename)
-    H.p (H.toHtml $ "File path: "            ++ filepath)
-    H.p (H.toHtml $ "Uploaded at: "          ++ show fileTime)
-    H.p $ do "Click "
-             a ! href (toValue dlLink) $ "here"
-             " to download the file."
+    H.div ! A.id "file-info" $ do
+      H.p (H.toHtml $ "Original file name: "   ++ filename)
+      H.p (H.toHtml $ "File name on server: "  ++ sfilename)
+      H.p (H.toHtml $ "File path: "            ++ filepath)
+      H.p (H.toHtml $ "Uploaded at: "          ++ show fileTime)
+      H.p $ do "Click "
+               a ! href (toValue dlLink) $ "here"
+               " to download the file."
 
