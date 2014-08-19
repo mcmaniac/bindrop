@@ -105,36 +105,46 @@ indexPart acid =
   do method [GET, POST]
      u <- lookFile "fileUpload"
      let uName = getFileName u
-     let uPath = getFilePath u
-     newName <- liftIO $ moveToRandomFile uploadDir 11 uPath
-     let vName = uName
-     let vPath = newName
-     let vSName = drop (length uploadDir) vPath
-     --TODO: extract content type and make it part of acid
 
-     --acid stuff here
-     --create new
-     t <- liftIO $ getCurrentTime
+     case uName of
+       "" -> indexMostRecent acid  --no file was selected on the form
+       _  -> handleFile acid u
 
-     file <- update' acid (NewUpload t)
+handleFile
+  :: AcidState UploadDB
+  -> (FilePath, FilePath, ContentType)
+  -> ServerPart Response
+handleFile acid u = do
+         let uName = getFileName u
+         let uPath = getFilePath u
+         newName <- liftIO $ moveToRandomFile uploadDir 11 uPath
+         let vName = uName
+         let vPath = newName
+         let vSName = drop (length uploadDir) vPath
 
-     let fID = file ^. fileID
+         --acid stuff here
+         --create new
+         t <- liftIO $ getCurrentTime
 
-     --edit the newly created file upload
-     mFile <- query' acid (FileByID fID)
+         file <- update' acid (NewUpload t)
 
-     case mFile of
-       (Just f@(FileUpload{..})) -> msum
-         [ do method POST
-              let updatedFile = f & fpath        .~ vPath
-                                  & fname        .~ vName
-                                  & sfname       .~ vSName
-                                  & uploadTime   .~ t
-              _ <- update' acid (UpdateUpload updatedFile)
+         let fID = file ^. fileID
 
-              ok $ toResponse $ upload updatedFile
-         ]
-       _ -> mzero -- FIXME
+         --edit the newly created file upload
+         mFile <- query' acid (FileByID fID)
+
+         case mFile of
+           (Just f@(FileUpload{..})) -> msum
+             [ do method POST
+                  let updatedFile = f & fpath        .~ vPath
+                                      & fname        .~ vName
+                                      & sfname       .~ vSName
+                                      & uploadTime   .~ t
+                  _ <- update' acid (UpdateUpload updatedFile)
+
+                  ok $ toResponse $ upload updatedFile
+             ]
+           _ -> mzero -- FIXME
 
 getFilePath :: (FilePath, FilePath, ContentType) -> FilePath
 getFilePath (fp, _, _) = fp
