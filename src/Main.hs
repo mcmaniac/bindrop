@@ -24,6 +24,7 @@ import HTML.Upload
 import HTML.Download
 import FileUtils
 import UploadDB
+import Users
 import qualified HTML.Error as Error
 
 httpConf :: Conf
