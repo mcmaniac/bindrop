@@ -77,6 +77,12 @@ userByName name =
   do db <- ask
      return $ getOne $ (db ^. users) @= name
 
+-- look up a user by email
+userByEmail :: String -> Query Users (Maybe User)
+userByEmail email =
+  do db <- ask
+     return $ getOne $ (db ^. users) @= email
+
 $(makeAcidic ''Users
   [ 'newUser
   , 'updateUser
