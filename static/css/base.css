@@ -62,11 +62,14 @@ header p#info {
 }
 
 #menu li {
-  text-align: center;
+  text-align:       center;
+  padding:          5px;
+  background-color: #666;
+  color:            #ccc;
 }
 
 #menu li a {
-  color: #ccc;
+  color: #fff;
 }
 
 #new-upload {
