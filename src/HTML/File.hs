@@ -16,9 +16,9 @@ recentFile file = toHtml $ do
   let dlLink   = "/s/" ++ file ^. sfname
   let infoLink = "localhost:8082/f/" ++ file ^. sfname
 
-  H.p $ do
-    a ! href (toValue dlLink) $ H.toHtml fileName
-  H.p (H.toHtml $ show fileTime)
-  H.p (H.toHtml $ infoLink)
-  H.br
+  H.div ! A.id "recentInfo" $ do
+    H.p $ do
+      a ! href (toValue dlLink) $ H.toHtml fileName
+    H.p (H.toHtml $ show fileTime)
+    H.p (H.toHtml $ infoLink)
 

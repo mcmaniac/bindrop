@@ -97,3 +97,24 @@ header p#info {
   margin: 0px 0px 0px 200px;
 }
 
+#recentInfo {
+  background-color: #999;
+  border: 1px solid #666;
+  width: 650px;
+  padding: 5px;
+  margin-top: 16px;
+  border-radius: 3px;
+  color: white;
+  font-size: 11px;
+  box-shadow: 3px 3px 10px #666;
+}
+
+#recentInfo p {
+  margin: 0;
+  padding: 4px;
+}
+
+#recentInfo a {
+  color: DarkRed;
+}
+
