@@ -121,3 +121,24 @@ header p#info {
   color: DarkRed;
 }
 
+#register-form {
+  display:           inline;
+  position:          absolute;
+  margin:            0px 0px 0px 200px;
+  padding-left:      10px;
+  padding-bottom:    15px;
+  padding-right:     32px;
+
+}
+
+#register-form label {
+  display:     inline-block;
+  width:       200px;
+  padding-bottom: 15px;
+}
+
+#register-form label input {
+  display: inline-block;
+  padding-bottom: 15px;
+}
+

@@ -87,7 +87,7 @@ mainRoute acid =
             --dir "u" $ ok $ toResponse $ login
 
           , do -- user registration page
-            dirs "u/r" $ ok $ toResponse $ register
+            dirs "r" $ ok $ toResponse $ register
 
          --todo , do -- process registration
          --       dir "u/r/register" $ path $ \user -> uRegister uAcid user
