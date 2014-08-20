@@ -1,18 +1,18 @@
 h1 {
-  font-family: 'Ubuntu', Consolas;
+  font-family: 'Ubuntu', sans-serif;
   font-size:   32px;
   text-align:  center;
   color:       DimGray;
 }
 
 h2 {
-  font-family: 'Ubuntu', Consolas;
+  font-family: 'Ubuntu', sans-serif;
   font-size:   18px;
   color:       Gray;
 }
 
 span {
-  font-family: 'Ubuntu', Consolas;
+  font-family: 'Ubuntu', sans-serif;
   font-size:   32px;
   color:       DarkRed;
 }
@@ -38,7 +38,7 @@ header {
 }
 
 header p#info {
-  font-family: 'Ubuntu', Consolas;
+  font-family: 'Ubuntu', sans-serif;
   font-size:   12px;
   text-align:  center;
   color:       #666;
@@ -84,7 +84,7 @@ header p#info {
 #recent {
   display:           inline;
   position:          absolute;
-  margin:            75px 0px 0px 200px;
+  margin:            128px 0px 0px 200px;
   padding-left:      10px;
 }
 
@@ -140,5 +140,25 @@ header p#info {
 #register-form label input {
   display: inline-block;
   padding-bottom: 15px;
+}
+
+/*submit buttons*/
+form input[type=submit],
+form input[type=reset] {
+  background-color: #777;
+  color: white;
+  border: 1px solid #666;
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: bold;
+  padding: 10px;
+  margin: 5px 0 5px;
+  border-radius: 3px;
+  display: block;
+  box-shadow: 3px 3px 10px #666;
+  cursor: pointer;
+}
+
+form input[type=submit]:hover {
+  text-decoration: underline;
 }
 
