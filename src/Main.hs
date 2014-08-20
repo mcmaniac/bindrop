@@ -50,14 +50,14 @@ main = do
   bracket (openLocalState initialUploadDBState)
           (createCheckpointAndClose)
           (\acid -> withUsers acid)
-            --simpleHTTP httpConf (mainRoute acid)) --httpsForward
-            where withUsers a =
-                                bracket (openLocalStateFrom "users/state/"
-                                  initialUsersState)
-                                        (createCheckpointAndClose)
-                                        (\uAcid ->
-                                          simpleHTTP httpConf
-                                            (mainRoute a uAcid))
+            where
+              withUsers a =
+                bracket (openLocalStateFrom "users/state/"
+                         initialUsersState)
+                        (createCheckpointAndClose)
+                        (\uAcid ->
+                         simpleHTTP httpConf
+                         (mainRoute a uAcid))
 
   -- HTTPS server
   --simpleHTTPS httpsConf mainHttp
