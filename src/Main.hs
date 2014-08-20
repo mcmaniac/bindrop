@@ -22,7 +22,9 @@ import HTML.Index
 import HTML.File
 import HTML.Upload
 import HTML.Download
+import HTML.Register
 import FileUtils
+import UserUtils
 import UploadDB
 import Users
 import qualified HTML.Error as Error
@@ -80,6 +82,15 @@ mainRoute acid =
 
           , do -- to download:
             dir "s" $ path $ \fileName -> spart acid fileName
+
+          --, do -- user login page
+            --dir "u" $ ok $ toResponse $ login
+
+          , do -- user registration page
+            dirs "u/r" $ ok $ toResponse $ register
+
+         --todo , do -- process registration
+         --       dir "u/r/register" $ path $ \user -> uRegister uAcid user
 
           , do -- about page
             dir "a" $ ok $ toResponse $ about
