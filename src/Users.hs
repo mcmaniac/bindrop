@@ -88,5 +88,6 @@ $(makeAcidic ''Users
   , 'updateUser
   , 'userByID
   , 'userByName
+  , 'userByEmail
   ])
 
