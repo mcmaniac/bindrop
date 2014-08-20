@@ -88,7 +88,8 @@ header p#info {
   padding-left:      10px;
 }
 
-#file-info {
+#file-info,
+#user-info {
   display:  inline;
   position: absolute;
   margin:   0px 0px 0px 200px;

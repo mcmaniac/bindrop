@@ -9,6 +9,7 @@ import Text.Blaze.Html5.Attributes as A
 
 import HTML.Base
 import HTML.Frames
+import Users
 
 register :: Html
 register = baseHtml $ do
@@ -33,4 +34,20 @@ register = baseHtml $ do
                H.br
                input ! type_ "submit"
                      ! name "register"
+
+registrationSuccess :: User -> Html
+registrationSuccess newUser = baseHtml $ do
+  let username = newUser ^. uName
+  let userEmail = newUser ^. uEmail
+  let userPass = newUser ^. uPass
+
+  H.head $ do
+    H.title "bindrop - registration successful"
+  H.body $ do
+    H.header $ mainHeader
+    mainMenu
+    H.div ! A.id "user-info" $ do
+      H.p (H.toHtml $ "Your username: "     ++ username)
+      H.p (H.toHtml $ "Your e-mail: "     ++ userEmail)
+      H.p (H.toHtml $ "Your password (hehe): " ++ userPass) -- obviously temporary
 

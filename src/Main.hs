@@ -49,16 +49,23 @@ main = do
   -- HTTP server
   bracket (openLocalState initialUploadDBState)
           (createCheckpointAndClose)
-          (\acid ->
-            simpleHTTP httpConf (mainRoute acid)) --httpsForward
+          (\acid -> withUsers acid)
+            --simpleHTTP httpConf (mainRoute acid)) --httpsForward
+            where withUsers a =
+                                bracket (openLocalStateFrom "users/state/"
+                                  initialUsersState)
+                                        (createCheckpointAndClose)
+                                        (\uAcid ->
+                                          simpleHTTP httpConf
+                                            (mainRoute a uAcid))
 
   -- HTTPS server
   --simpleHTTPS httpsConf mainHttp
 
-mainHttp :: AcidState UploadDB -> ServerPart Response
-mainHttp acid = do
+mainHttp :: AcidState UploadDB -> AcidState Users -> ServerPart Response
+mainHttp acid uAcid = do
   _ <- compressedResponseFilter
-  mainRoute acid
+  mainRoute acid uAcid
 
 httpsForward :: ServerPart Response
 httpsForward = withHost $ \h -> uriRest $ \r -> do
@@ -69,8 +76,8 @@ httpsForward = withHost $ \h -> uriRest $ \r -> do
   seeOther url (toResponse $ "Forwarding to: " ++ url ++ "\n")
 
 
-mainRoute :: AcidState UploadDB -> ServerPart Response
-mainRoute acid =
+mainRoute :: AcidState UploadDB -> AcidState Users -> ServerPart Response
+mainRoute acid uAcid =
   do decodeBody myPolicy
      msum [ indexPart acid
           , do -- the "/" index page
@@ -87,10 +94,10 @@ mainRoute acid =
             --dir "u" $ ok $ toResponse $ login
 
           , do -- user registration page
-            dirs "r" $ ok $ toResponse $ register
+            dir "r" $ ok $ toResponse $ register
 
-         --todo , do -- process registration
-         --       dir "u/r/register" $ path $ \user -> uRegister uAcid user
+          , do -- process registration
+            dirs "u/r" $ uRegisterPart uAcid
 
           , do -- about page
             dir "a" $ ok $ toResponse $ about
