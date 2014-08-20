@@ -15,8 +15,6 @@ import Data.IxSet           ( Indexable(..), (@=), (@<), getOne
 import qualified Data.IxSet as IxSet
 import Data.SafeCopy        ( base, deriveSafeCopy )
 
-import Crypto.Scrypt
-
 newtype UserID = UserID {unUserID :: Integer}
   deriving (Eq, Ord, Show, Data, Enum, Typeable, Num)
 
