@@ -16,7 +16,6 @@ import Happstack.Server.SimpleHTTPS
 import Happstack.Server.Compression
 
 import qualified Data.ByteString as B
-import qualified Data.ByteString.Lazy as L
 import qualified Data.ByteString.Char8 as C
 
 import Bindrop.State
@@ -39,7 +38,7 @@ uRegisterPart acid =
      user <- update' acid NewUser
      let uID = user ^. userID
 
-     --edit the newly created file upload
+     --edit the newly created user
      mUser <- query' acid (UserByID uID)
 
      case mUser of
@@ -47,7 +46,7 @@ uRegisterPart acid =
          [ do method POST
               let updatedUser = u & uName  .~ userName
                                   & uEmail .~ userEmail
-                                  & uPass  .~ userPass
+                                  & uPass  .~ (getEncryptedPass userPass)
               _ <- update' acid (UpdateUser updatedUser)
               ok $ toResponse $ registrationSuccess updatedUser
          ]
@@ -64,7 +63,7 @@ loginPart acid =
 
      case mUser of
        (Just mUser) ->
-         if userPass == (mUser ^. uPass)
+         if (getEncryptedPass userPass) == (mUser ^. uPass)
            then ok $ toResponse $ loginSuccessful userName
          else
            ok $ toResponse $ loginFailed
