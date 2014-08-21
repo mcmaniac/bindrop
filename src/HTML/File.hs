@@ -7,7 +7,7 @@ import Text.Blaze.Html
 import Text.Blaze.Html5 as H
 import Text.Blaze.Html5.Attributes as A
 
-import UploadDB
+import Bindrop.State.UploadDB
 
 recentFile :: FileUpload -> Html
 recentFile file = toHtml $ do

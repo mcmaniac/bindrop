@@ -9,7 +9,7 @@ import Text.Blaze.Html5.Attributes as A
 
 import HTML.Base
 import HTML.Frames
-import Users
+import Bindrop.State.Users
 
 register :: Html
 register = baseHtml $ do

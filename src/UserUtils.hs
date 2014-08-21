@@ -16,22 +16,23 @@ import Happstack.Server.Compression
 import Crypto.Scrypt
 import qualified Data.ByteString as B
 
-import Users
+import Bindrop.State
+import Bindrop.State.Users
 import HTML.Register
 
 mkEncrypted :: B.ByteString -> IO EncryptedPass
 mkEncrypted pw = encryptPassIO defaultParams (Pass pw)
 
-uRegisterPart :: AcidState Users -> ServerPart Response
-uRegisterPart uAcid = do
+uRegisterPart :: AcidState BindropState -> ServerPart Response
+uRegisterPart acid = do
   userName <- look "username"
   userEmail <- look "email"
   userPass <- look "pass"
-  user <- update' uAcid NewUser
+  user <- update' acid NewUser
   let uID = user ^. userID
 
   --edit the newly created file upload
-  mUser <- query' uAcid (UserByID uID)
+  mUser <- query' acid (UserByID uID)
 
   case mUser of
     (Just u@(User{..})) -> msum
@@ -39,7 +40,7 @@ uRegisterPart uAcid = do
            let updatedUser = u & uName  .~ userName
                                & uEmail .~ userEmail
                                & uPass  .~ userPass
-           _ <- update' uAcid (UpdateUser updatedUser)
+           _ <- update' acid (UpdateUser updatedUser)
 
            ok $ toResponse $ registrationSuccess updatedUser
       ]

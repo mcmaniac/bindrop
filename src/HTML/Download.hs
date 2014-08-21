@@ -9,7 +9,7 @@ import Text.Blaze.Html5.Attributes as A
 
 import HTML.Base
 import HTML.Frames
-import UploadDB
+import Bindrop.State.UploadDB
 
 viewDownload :: FileUpload -> Html
 viewDownload file = baseHtml $ do

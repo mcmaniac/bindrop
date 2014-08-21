@@ -25,8 +25,9 @@ import HTML.Download
 import HTML.Register
 import FileUtils
 import UserUtils
-import UploadDB
-import Users
+import Bindrop.State
+import Bindrop.State.UploadDB
+import Bindrop.State.Users
 import qualified HTML.Error as Error
 
 httpConf :: Conf
@@ -47,25 +48,17 @@ main = do
   putStrLn "Starting server..."
 
   -- HTTP server
-  bracket (openLocalState initialUploadDBState)
+  bracket (openLocalState initialBindropState)
           (createCheckpointAndClose)
-          (\acid -> withUsers acid)
-            where
-              withUsers a =
-                bracket (openLocalStateFrom "users/state/"
-                         initialUsersState)
-                        (createCheckpointAndClose)
-                        (\uAcid ->
-                         simpleHTTP httpConf
-                         (mainRoute a uAcid))
+          (\acid -> simpleHTTP httpConf (mainRoute acid))
 
   -- HTTPS server
   --simpleHTTPS httpsConf mainHttp
 
-mainHttp :: AcidState UploadDB -> AcidState Users -> ServerPart Response
-mainHttp acid uAcid = do
+mainHttp :: AcidState BindropState -> ServerPart Response
+mainHttp acid = do
   _ <- compressedResponseFilter
-  mainRoute acid uAcid
+  mainRoute acid
 
 httpsForward :: ServerPart Response
 httpsForward = withHost $ \h -> uriRest $ \r -> do
@@ -76,8 +69,8 @@ httpsForward = withHost $ \h -> uriRest $ \r -> do
   seeOther url (toResponse $ "Forwarding to: " ++ url ++ "\n")
 
 
-mainRoute :: AcidState UploadDB -> AcidState Users -> ServerPart Response
-mainRoute acid uAcid =
+mainRoute :: AcidState BindropState -> ServerPart Response
+mainRoute acid =
   do decodeBody myPolicy
      msum [ indexPart acid
           , do -- the "/" index page
@@ -96,8 +89,8 @@ mainRoute acid uAcid =
           , do -- user registration page
             dir "r" $ ok $ toResponse $ register
 
-          , do -- process registration
-            dirs "u/r" $ uRegisterPart uAcid
+--          , do -- process registration
+--            dirs "u/r" $ uRegisterPart acid
 
           , do -- about page
             dir "a" $ ok $ toResponse $ about
@@ -112,14 +105,14 @@ mainRoute acid uAcid =
 myPolicy :: BodyPolicy
 myPolicy = (defaultBodyPolicy "/tmp/" (10*10^(6 :: Int)) 1000 1000)
 
-indexMostRecent :: AcidState UploadDB -> ServerPart Response
+indexMostRecent :: AcidState BindropState -> ServerPart Response
 indexMostRecent acid = do
   now <- liftIO $ getCurrentTime
   mostRecent <- query' acid (MostRecentUploads now)
   ok $ toResponse $ baseHtml $ do
     index $ mapM_ recentFile mostRecent
 
-indexPart :: AcidState UploadDB -> ServerPart Response
+indexPart :: AcidState BindropState -> ServerPart Response
 indexPart acid =
   do method [GET, POST]
      u <- lookFile "fileUpload"
@@ -130,7 +123,7 @@ indexPart acid =
        _  -> handleFile acid u
 
 handleFile
-  :: AcidState UploadDB
+  :: AcidState BindropState
   -> (FilePath, FilePath, ContentType)
   -> ServerPart Response
 handleFile acid u = do
@@ -174,7 +167,7 @@ getFileName (_, name, _) = name
 --getFileContents :: (FilePath, FilePath, ContentType) -> FilePath
 --getFileContents (_, _, contents) =
 
-fpart :: AcidState UploadDB -> String -> ServerPart Response
+fpart :: AcidState BindropState -> String -> ServerPart Response
 fpart acid s = do
   file <- query' acid (FileBySName s)
   case file of
@@ -183,7 +176,7 @@ fpart acid s = do
     _ -> mzero
 
 --serve the file response to dir "s"
-spart :: AcidState UploadDB -> String -> ServerPart Response
+spart :: AcidState BindropState -> String -> ServerPart Response
 spart acid s = do
   dlfile <- query' acid (FileBySName s)
   case dlfile of
