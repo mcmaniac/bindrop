@@ -23,6 +23,7 @@ import HTML.File
 import HTML.Upload
 import HTML.Download
 import HTML.Register
+import HTML.Login
 import FileUtils
 import UserUtils
 import Bindrop.State
@@ -83,8 +84,11 @@ mainRoute acid =
           , do -- to download:
             dir "s" $ path $ \fileName -> spart acid fileName
 
-          --, do -- user login page
-            --dir "u" $ ok $ toResponse $ login
+          , do -- user login page
+            dir "u" $ ok $ toResponse $ loginPage
+
+       --   , do -- login successful
+       --     dirs "u/s"
 
           , do -- user registration page
             dir "r" $ ok $ toResponse $ register
