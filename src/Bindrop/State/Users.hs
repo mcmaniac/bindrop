@@ -14,6 +14,7 @@ import Data.IxSet           ( Indexable(..), (@=), (@<), getOne
                             , inferIxSet, noCalcs, toDescList)
 import qualified Data.IxSet as IxSet
 import Data.SafeCopy        ( base, deriveSafeCopy )
+import qualified Data.ByteString as B
 
 newtype UserID = UserID {unUserID :: Integer}
   deriving (Eq, Ord, Show, Data, Enum, Typeable, Num)
@@ -23,7 +24,7 @@ $(deriveSafeCopy 0 'base ''UserID)
 data User = User { _userID :: UserID
                  , _uName  :: String --user name
                  , _uEmail :: String --user email
-                 , _uPass  :: String --user password
+                 , _uPass  :: B.ByteString --user password
                  } deriving (Eq, Ord, Show, Data, Typeable)
 
 $(makeLenses ''User)
@@ -34,7 +35,7 @@ inferIxSet "UserDB" ''User 'noCalcs
   [ ''UserID
   , ''String
   , ''String
-  , ''String
+  , ''B.ByteString
   ]
 
 data Users =
