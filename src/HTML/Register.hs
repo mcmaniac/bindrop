@@ -6,6 +6,7 @@ import Control.Lens.Operators
 import Text.Blaze.Html
 import Text.Blaze.Html5 as H
 import Text.Blaze.Html5.Attributes as A
+import qualified Data.ByteString as B
 
 import HTML.Base
 import HTML.Frames
@@ -34,6 +35,7 @@ register = baseHtml $ do
                H.br
                input ! type_ "submit"
                      ! name "register"
+                     ! value "Register"
 
 registrationSuccess :: User -> Html
 registrationSuccess newUser = baseHtml $ do
@@ -49,5 +51,5 @@ registrationSuccess newUser = baseHtml $ do
     H.div ! A.id "user-info" $ do
       H.p (H.toHtml $ "Your username: "     ++ username)
       H.p (H.toHtml $ "Your e-mail: "     ++ userEmail)
-      H.p (H.toHtml $ "Your password (hehe): " ++ userPass) -- obviously temporary
+      H.p (H.toHtml $ "Your password (hehe): " ++ show userPass)  -- obviously temporary
 

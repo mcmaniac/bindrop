@@ -20,5 +20,6 @@ mainMenu = do
   H.div ! A.id "mainMenu" $
     H.ul ! A.id "menu" $ do
       H.li $ H.a ! A.href "/" $ "Home"
+      H.li $ H.a ! A.href "/u" $ "Login"
       H.li $ H.a ! A.href "/a" $ "About"
 

@@ -122,7 +122,8 @@ header p#info {
   color: DarkRed;
 }
 
-#register-form {
+#register-form,
+#login-page {
   display:           inline;
   position:          absolute;
   margin:            0px 0px 0px 200px;
@@ -132,13 +133,15 @@ header p#info {
 
 }
 
-#register-form label {
+#register-form label,
+#login-page label {
   display:     inline-block;
-  width:       200px;
+  width:       100px;
   padding-bottom: 15px;
 }
 
-#register-form label input {
+#register-form label input,
+#login-page label input {
   display: inline-block;
   padding-bottom: 15px;
 }

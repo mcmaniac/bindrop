@@ -28,6 +28,7 @@ index mostRecentUploadList = baseHtml $ do
                                                   ! A.size "50"
                input ! type_ "submit"
                      ! name "upload"
+                     ! value "Upload"
 
     H.div ! A.id "recent" $ do
       H.br
