@@ -89,8 +89,8 @@ mainRoute acid =
           , do -- user registration page
             dir "r" $ ok $ toResponse $ register
 
---          , do -- process registration
---            dirs "u/r" $ uRegisterPart acid
+          , do -- process registration
+            dirs "u/r" $ uRegisterPart acid
 
           , do -- about page
             dir "a" $ ok $ toResponse $ about
