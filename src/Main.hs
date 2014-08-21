@@ -87,14 +87,14 @@ mainRoute acid =
           , do -- user login page
             dir "u" $ ok $ toResponse $ loginPage
 
-       --   , do -- login successful
-       --     dirs "u/s"
+          , do -- process login
+            dir "pl" $ loginPart acid
 
           , do -- user registration page
             dir "r" $ ok $ toResponse $ register
 
           , do -- process registration
-            dirs "u/r" $ uRegisterPart acid
+            dir "pr" $ uRegisterPart acid
 
           , do -- about page
             dir "a" $ ok $ toResponse $ about
@@ -131,36 +131,36 @@ handleFile
   -> (FilePath, FilePath, ContentType)
   -> ServerPart Response
 handleFile acid u = do
-         let uName = getFileName u
-         let uPath = getFilePath u
-         newName <- liftIO $ moveToRandomFile uploadDir 11 uPath
-         let vName = uName
-         let vPath = newName
-         let vSName = drop (length uploadDir) vPath
+  let uName = getFileName u
+  let uPath = getFilePath u
+  newName <- liftIO $ moveToRandomFile uploadDir 11 uPath
+  let vName = uName
+  let vPath = newName
+  let vSName = drop (length uploadDir) vPath
 
-         --acid stuff here
-         --create new
-         t <- liftIO $ getCurrentTime
+  --acid stuff here
+  --create new
+  t <- liftIO $ getCurrentTime
 
-         file <- update' acid (NewUpload t)
+  file <- update' acid (NewUpload t)
 
-         let fID = file ^. fileID
+  let fID = file ^. fileID
 
-         --edit the newly created file upload
-         mFile <- query' acid (FileByID fID)
+  --edit the newly created file upload
+  mFile <- query' acid (FileByID fID)
 
-         case mFile of
-           (Just f@(FileUpload{..})) -> msum
-             [ do method POST
-                  let updatedFile = f & fpath        .~ vPath
-                                      & fname        .~ vName
-                                      & sfname       .~ vSName
-                                      & uploadTime   .~ t
-                  _ <- update' acid (UpdateUpload updatedFile)
+  case mFile of
+    (Just f@(FileUpload{..})) -> msum
+      [ do method POST
+           let updatedFile = f & fpath        .~ vPath
+                               & fname        .~ vName
+                               & sfname       .~ vSName
+                               & uploadTime   .~ t
+           _ <- update' acid (UpdateUpload updatedFile)
 
-                  ok $ toResponse $ upload updatedFile
-             ]
-           _ -> mzero -- FIXME
+           ok $ toResponse $ upload updatedFile
+      ]
+    _ -> mzero -- FIXME
 
 getFilePath :: (FilePath, FilePath, ContentType) -> FilePath
 getFilePath (fp, _, _) = fp

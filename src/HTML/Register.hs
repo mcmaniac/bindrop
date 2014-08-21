@@ -15,14 +15,13 @@ import Bindrop.State.Users
 register :: Html
 register = baseHtml $ do
   H.head $ do
-    H.title "bindrop - register"
+    H.title "register"
   H.body $ do
     H.header $ mainHeader
     mainMenu
     H.div ! A.id "register-form" $ do
       H.h2 "Register a new user"
-      H.form ! enctype "multipart/form-data"
-             ! action "/u/r"
+      H.form ! action "pr"
              ! A.method "post" $ do
                H.label "Username: " >> input ! A.type_ "text"
                                              ! A.name "username"
@@ -44,12 +43,21 @@ registrationSuccess newUser = baseHtml $ do
   let userPass = newUser ^. uPass
 
   H.head $ do
-    H.title "bindrop - registration successful"
+    H.title "registration successful"
   H.body $ do
     H.header $ mainHeader
     mainMenu
     H.div ! A.id "user-info" $ do
-      H.p (H.toHtml $ "Your username: "     ++ username)
+      H.p (H.toHtml $ "Your username: "   ++ username)
       H.p (H.toHtml $ "Your e-mail: "     ++ userEmail)
       H.p (H.toHtml $ "Your password (hehe): " ++ show userPass)  -- obviously temporary
+
+registrationFail :: Html
+registrationFail = baseHtml $ do
+  H.head $ do
+    H.title "registration failed"
+  H.body $ do
+    H.header $ mainHeader
+    mainMenu
+    H.p "Registration failed :( "
 

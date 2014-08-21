@@ -21,8 +21,7 @@ loginPage = baseHtml $ do
     mainMenu
     H.div ! A.id "login-page" $ do
       H.h2 "Login"
-      H.form ! enctype "multipart/form-data"
-             ! action "/u/l"
+      H.form ! action "pl"
              ! A.method "post" $ do
                H.label "Username: " >> input ! A.type_ "text"
                                              ! A.name "username"
@@ -37,4 +36,31 @@ loginPage = baseHtml $ do
       H.p $ do "Don't have an account yet? "
                a ! href ("/r") $ "Register"
                " here."
+
+loginSuccessful :: String -> Html
+loginSuccessful userName = baseHtml $ do
+  H.head $ do
+    H.title "login successful!"
+  H.body $ do
+    H.header $ mainHeader
+    mainMenu
+    H.div ! A.id "user-info" $ do
+      H.p "Login successful!"
+      H.p (H.toHtml $ "Welcome back " ++ userName ++ "!")
+      H.p $ do "Click "
+               a ! href ("/") $ "here"
+               " to return to the home page"
+
+loginFailed :: Html
+loginFailed = baseHtml $ do
+  H.head $ do
+    H.title "login failed"
+  H.body $ do
+    H.header $ mainHeader
+    mainMenu
+    H.div ! A.id "user-info" $ do
+      H.p "Login failed :@ "
+      H.p $ do "Click "
+               a ! href ("/") $ "here"
+               " to return to the home page"
 
