@@ -19,7 +19,13 @@ about = baseHtml $ do
     mainMenu
     H.div ! A.id "about" $ do
       H.h2 "About bindrop"
-      H.p "About us... todo"
+      H.p $ do
+            "Bindrop is a convenient solution for your file hosting needs "
+            "with dependable functionality backed by a simple design."
+      H.p $ do
+            "Acid-state offers a NoSQL, RAM-cloud persistent data store, and "
+            "in combination with the Happstack webserver library, makes for "
+            " a very reliable service."
       H.p $ do
             a ! href (gitLink) $ "bindrop"
             " on github"
