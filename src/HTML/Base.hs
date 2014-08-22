@@ -27,6 +27,10 @@ htmlHeader title cssFiles scripts =
     forM_ cssFiles $ \c ->
       H.link ! A.type_ "text/css" !
         A.href (toValue $ "/static/css/" ++ c) ! A.rel "stylesheet"
+    --Ubuntu font
+    H.link ! A.type_ "text/css" !
+      A.href ("http://fonts.googleapis.com/css?family=Ubuntu") !
+      A.rel "stylesheet"
 
 baseHtml :: Html -> Html
 baseHtml content = docTypeHtml $ do
