@@ -39,7 +39,6 @@ uRegisterPart acid =
      mUserByName <- query' acid (UserByName userName)
      mUserByEmail <- query' acid (UserByEmail userEmail)
      let areUnique = if (isUniqueUser mUserByName && isUniqueUser mUserByEmail)
-                       == True
                        then True
                      else False
      case areUnique of
