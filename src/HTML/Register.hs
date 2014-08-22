@@ -59,5 +59,6 @@ registrationFail = baseHtml $ do
   H.body $ do
     H.header $ mainHeader
     mainMenu
-    H.p "Registration failed :( "
+    H.div ! A.id "user-info" $ do
+      H.p "Registration failed :( "
 

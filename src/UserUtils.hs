@@ -35,22 +35,34 @@ uRegisterPart acid =
      passInput <- look "pass"
      userPass  <- liftIO $ mkEncrypted $ C.pack passInput
 
-     user <- update' acid NewUser
-     let uID = user ^. userID
+     -- only accept unique usernames and emails
+     mUserByName <- query' acid (UserByName userName)
+     mUserByEmail <- query' acid (UserByEmail userEmail)
+     let areUnique = if (isUniqueUser mUserByName && isUniqueUser mUserByEmail)
+                       == True
+                       then True
+                     else False
+     case areUnique of
+       True -> do
+         -- create new user
+         user <- update' acid NewUser
+         let uID = user ^. userID
 
-     --edit the newly created user
-     mUser <- query' acid (UserByID uID)
+         --edit the newly created user
+         mUser <- query' acid (UserByID uID)
 
-     case mUser of
-       (Just u@(User{..})) -> msum
-         [ do method POST
-              let updatedUser = u & uName  .~ userName
-                                  & uEmail .~ userEmail
-                                  & uPass  .~ (getEncryptedPass userPass)
-              _ <- update' acid (UpdateUser updatedUser)
-              ok $ toResponse $ registrationSuccess updatedUser
-         ]
-       _ -> ok $ toResponse $ registrationFail
+         case mUser of
+           (Just u@(User{..})) -> msum
+             [ do method POST
+                  let updatedUser = u & uName  .~ userName
+                                      & uEmail .~ userEmail
+                                      & uPass  .~ (getEncryptedPass userPass)
+                  _ <- update' acid (UpdateUser updatedUser)
+                  ok $ toResponse $ registrationSuccess updatedUser
+             ]
+           _ -> ok $ toResponse $ registrationFail
+
+       False -> ok $ toResponse $ registrationFail
 
 loginPart :: AcidState BindropState -> ServerPart Response
 loginPart acid =
@@ -72,4 +84,10 @@ loginPart acid =
            ok $ toResponse $ loginFailed
 
        _ -> mzero
+
+isUniqueUser :: Maybe User -> Bool
+isUniqueUser user =
+  case user of
+    (Just user) -> False
+    Nothing     -> True
 
