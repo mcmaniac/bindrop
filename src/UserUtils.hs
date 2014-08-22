@@ -57,13 +57,16 @@ loginPart acid =
   do method [GET, POST]
      userName <- look "username"
      passInput <- look "pass"
-     userPass  <- liftIO $ mkEncrypted $ C.pack passInput
 
      mUser <- query' acid (UserByName userName)
 
+     -- verify the password
      case mUser of
-       (Just mUser) ->
-         if (getEncryptedPass userPass) == (mUser ^. uPass)
+       (Just mUser) -> do
+         let userPass = Pass $ C.pack passInput
+         let match    = verifyPass' userPass $ EncryptedPass (mUser ^. uPass)
+
+         if match == True
            then ok $ toResponse $ loginSuccessful userName
          else
            ok $ toResponse $ loginFailed
