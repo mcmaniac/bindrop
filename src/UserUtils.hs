@@ -1,10 +1,11 @@
-{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE DeriveDataTypeable, TemplateHaskell, RecordWildCards #-}
 
 module UserUtils where
 
 import Control.Monad
 import Control.Monad.IO.Class
 import Control.Lens.Operators
+import Control.Lens.TH ( makeLenses )
 
 import Crypto.Scrypt
 
@@ -14,9 +15,12 @@ import Data.Acid.Advanced ( query', update' )
 import Happstack.Server
 import Happstack.Server.SimpleHTTPS
 import Happstack.Server.Compression
+import Happstack.Server.ClientSession
 
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Char8 as C
+import Data.Data ( Data, Typeable )
+import Data.SafeCopy ( base, deriveSafeCopy )
 
 import Bindrop.State
 import Bindrop.State.Users
@@ -24,10 +28,22 @@ import HTML.Index
 import HTML.Login
 import HTML.Register
 
+--cookie
+data SessionData = SessionData
+  { _user :: Maybe User
+  } deriving (Eq, Ord, Show, Data, Typeable)
+
+$(makeLenses ''SessionData)
+$(deriveSafeCopy 0 'base ''SessionData)
+
+instance ClientSession SessionData where
+  emptySession = SessionData { _user = Nothing }
+
 mkEncrypted :: B.ByteString -> IO EncryptedPass
 mkEncrypted pw = encryptPassIO defaultParams (Pass pw)
 
-uRegisterPart :: AcidState BindropState -> ServerPart Response
+uRegisterPart :: AcidState BindropState ->
+  ClientSessionT SessionData (ServerPartT IO) Response
 uRegisterPart acid =
   do method [GET, POST]
      userName  <- look "username"
@@ -63,13 +79,15 @@ uRegisterPart acid =
 
        False -> ok $ toResponse $ registrationFail
 
-loginPart :: AcidState BindropState -> ServerPart Response
+loginPart :: AcidState BindropState ->
+  ClientSessionT SessionData (ServerPartT IO) Response
 loginPart acid =
   do method [GET, POST]
      userName <- look "username"
      passInput <- look "pass"
 
      mUser <- query' acid (UserByName userName)
+     putSession $ SessionData mUser --set cookie to user
 
      -- verify the password
      case mUser of
@@ -77,9 +95,12 @@ loginPart acid =
          let userPass = Pass $ C.pack passInput
          let match    = verifyPass' userPass $ EncryptedPass (mUser ^. uPass)
 
-         if match == True
-           then ok $ toResponse $ loginSuccessful userName
-         else
+         if match
+           then do
+                  u <- getSession
+                  ok $ toResponse $ loginSuccessful u
+         else do
+           putSession $ SessionData Nothing --nothing in cookie
            ok $ toResponse $ loginFailed
 
        _ -> mzero

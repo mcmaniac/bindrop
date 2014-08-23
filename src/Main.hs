@@ -15,6 +15,7 @@ import Data.Time          ( getCurrentTime )
 import Happstack.Server
 import Happstack.Server.SimpleHTTPS
 import Happstack.Server.Compression
+import Happstack.Server.ClientSession
 
 import HTML.About
 import HTML.Base
@@ -47,16 +48,20 @@ uploadDir = "files/"
 main :: IO ()
 main = do
   putStrLn "Starting server..."
+  key <- getDefaultKey
+  let sessionConf = mkSessionConf key
 
   -- HTTP server
   bracket (openLocalState initialBindropState)
           (createCheckpointAndClose)
-          (\acid -> simpleHTTP httpConf (mainRoute acid))
+          (\acid -> simpleHTTP httpConf $
+            withClientSessionT sessionConf $ mainRoute acid)
 
   -- HTTPS server
   --simpleHTTPS httpsConf mainHttp
 
-mainHttp :: AcidState BindropState -> ServerPart Response
+mainHttp :: AcidState BindropState ->
+  ClientSessionT SessionData (ServerPartT IO) Response
 mainHttp acid = do
   _ <- compressedResponseFilter
   mainRoute acid
@@ -70,7 +75,8 @@ httpsForward = withHost $ \h -> uriRest $ \r -> do
   seeOther url (toResponse $ "Forwarding to: " ++ url ++ "\n")
 
 
-mainRoute :: AcidState BindropState -> ServerPart Response
+mainRoute :: AcidState BindropState ->
+  ClientSessionT SessionData (ServerPartT IO) Response
 mainRoute acid =
   do decodeBody myPolicy
      msum [ indexPart acid
@@ -109,14 +115,16 @@ mainRoute acid =
 myPolicy :: BodyPolicy
 myPolicy = (defaultBodyPolicy "/tmp/" (10*10^(6 :: Int)) 1000 1000)
 
-indexMostRecent :: AcidState BindropState -> ServerPart Response
+indexMostRecent :: AcidState BindropState ->
+  ClientSessionT SessionData (ServerPartT IO) Response
 indexMostRecent acid = do
   now <- liftIO $ getCurrentTime
   mostRecent <- query' acid (MostRecentUploads now)
   ok $ toResponse $ baseHtml $ do
     index $ mapM_ recentFile mostRecent
 
-indexPart :: AcidState BindropState -> ServerPart Response
+indexPart :: AcidState BindropState ->
+  ClientSessionT SessionData (ServerPartT IO) Response
 indexPart acid =
   do method [GET, POST]
      u <- lookFile "fileUpload"
@@ -129,7 +137,7 @@ indexPart acid =
 handleFile
   :: AcidState BindropState
   -> (FilePath, FilePath, ContentType)
-  -> ServerPart Response
+  -> ClientSessionT SessionData (ServerPartT IO) Response
 handleFile acid u = do
   let uName = getFileName u
   let uPath = getFilePath u
@@ -171,7 +179,8 @@ getFileName (_, name, _) = name
 --getFileContents :: (FilePath, FilePath, ContentType) -> FilePath
 --getFileContents (_, _, contents) =
 
-fpart :: AcidState BindropState -> String -> ServerPart Response
+fpart :: AcidState BindropState -> String ->
+  ClientSessionT SessionData (ServerPartT IO) Response
 fpart acid s = do
   file <- query' acid (FileBySName s)
   case file of
@@ -180,7 +189,8 @@ fpart acid s = do
     _ -> mzero
 
 --serve the file response to dir "s"
-spart :: AcidState BindropState -> String -> ServerPart Response
+spart :: AcidState BindropState -> String ->
+  ClientSessionT SessionData (ServerPartT IO) Response
 spart acid s = do
   dlfile <- query' acid (FileBySName s)
   case dlfile of

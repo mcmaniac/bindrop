@@ -11,6 +11,7 @@ import qualified Data.ByteString as B
 import HTML.Base
 import HTML.Frames
 import Bindrop.State.Users
+import Happstack.Server.ClientSession
 
 loginPage :: Html
 loginPage = baseHtml $ do
@@ -37,19 +38,24 @@ loginPage = baseHtml $ do
                a ! href ("/r") $ "Register"
                " here."
 
-loginSuccessful :: String -> Html
-loginSuccessful userName = baseHtml $ do
+loginSuccessful :: Maybe User -> Html
+loginSuccessful u = baseHtml $ do
   H.head $ do
     H.title "login successful!"
   H.body $ do
     H.header $ mainHeader
     mainMenu
-    H.div ! A.id "user-info" $ do
-      H.p "Login successful!"
-      H.p (H.toHtml $ "Welcome back " ++ userName ++ "!")
-      H.p $ do "Click "
-               a ! href ("/") $ "here"
-               " to return to the home page"
+    case u of
+      (Just u) -> do
+        H.div ! A.id "user-info" $ do
+          let userName = u ^. uName
+          H.p "Login successful!"
+          H.p (toHtml $ "Welcome back " ++ userName ++ "!")
+          H.p $ do "Click "
+                   a ! href ("/") $ "here"
+                   " to return to the home page"
+      Nothing -> H.p "Login failed"
+
 
 loginFailed :: Html
 loginFailed = baseHtml $ do
