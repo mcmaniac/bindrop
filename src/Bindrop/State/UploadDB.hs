@@ -4,9 +4,6 @@
 
 module Bindrop.State.UploadDB where
 
-import Control.Monad.State  ( get, put )
-import Control.Monad.Reader ( ask )
-import Control.Lens         ( (&), (^.), (%~) )
 import Control.Lens.TH      ( makeLenses )
 import Data.Acid
 import Data.Data            ( Data, Typeable )
