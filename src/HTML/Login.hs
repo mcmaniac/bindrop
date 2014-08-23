@@ -47,15 +47,14 @@ loginSuccessful u = baseHtml $ do
     mainMenu
     case u of
       (Just u) -> do
+        let userName = u ^. uName
         H.div ! A.id "user-info" $ do
-          let userName = u ^. uName
           H.p "Login successful!"
           H.p (toHtml $ "Welcome back " ++ userName ++ "!")
           H.p $ do "Click "
                    a ! href ("/") $ "here"
                    " to return to the home page"
       Nothing -> H.p "Login failed"
-
 
 loginFailed :: Html
 loginFailed = baseHtml $ do

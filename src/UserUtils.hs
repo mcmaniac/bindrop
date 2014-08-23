@@ -87,7 +87,7 @@ loginPart acid =
      passInput <- look "pass"
 
      mUser <- query' acid (UserByName userName)
-     putSession $ SessionData mUser --set cookie to user
+     putSession $ SessionData mUser
 
      -- verify the password
      case mUser of
@@ -97,11 +97,12 @@ loginPart acid =
 
          if match
            then do
-                  u <- getSession
-                  ok $ toResponse $ loginSuccessful u
-         else do
-           putSession $ SessionData Nothing --nothing in cookie
-           ok $ toResponse $ loginFailed
+             u <- getSession
+             let mU = u ^. user
+             ok $ toResponse $ loginSuccessful mU
+           else do
+             putSession $ SessionData Nothing
+             ok $ toResponse $ loginFailed
 
        _ -> mzero
 
