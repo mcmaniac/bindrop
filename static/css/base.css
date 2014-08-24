@@ -50,32 +50,32 @@ header {
   border-radius:    5px;
   background-color: #666;
   position:         fixed;
-  margin:           20px 0px 0px 20px;
-  padding-right:    35px;
+  margin:           125px 20px auto;
+  top:              100px;
+  left:             20px;
   box-shadow:       3px 3px 10px #444;
+  padding-right:    40px;
   vertical-align:   middle;
+  list-style-type:  none;
 }
 
-#menu {
-  list-style-type: none;
-  vertical-align:  center;
-}
-
-#menu li {
+#mainMenu li {
+  list-style-type:  none;
   text-align:       center;
   padding:          5px;
   background-color: #666;
   color:            #ccc;
+  width:            80px;
 }
 
-#menu li a {
+#mainMenu li a {
   color: #fff;
 }
 
 #new-upload {
   display:           inline;
   position:          absolute;
-  margin:            0px 0px 0px 200px;
+  margin:            0px 0px 0px 240px;
   padding-left:      10px;
   padding-bottom:    15px;
   padding-right:     32px;
@@ -84,7 +84,7 @@ header {
 #recent {
   display:           inline;
   position:          absolute;
-  margin:            128px 0px 0px 200px;
+  margin:            128px 0px 0px 240px;
   padding-left:      10px;
 }
 
@@ -92,13 +92,13 @@ header {
 #user-info {
   display:  inline;
   position: absolute;
-  margin:   0px 0px 0px 200px;
+  margin:   0px 0px 0px 240px;
 }
 
 #about {
   display: inline;
   position: absolute;
-  margin: 0px 0px 0px 200px;
+  margin: 0px 0px 0px 240px;
 }
 
 #recentInfo {
@@ -126,7 +126,7 @@ header {
 #login-page {
   display:           inline;
   position:          absolute;
-  margin:            0px 0px 0px 200px;
+  margin:            0px 0px 0px 240px;
   padding-left:      10px;
   padding-bottom:    15px;
   padding-right:     32px;

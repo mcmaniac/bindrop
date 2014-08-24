@@ -8,15 +8,16 @@ import Text.Blaze.Html5.Attributes as A
 
 import HTML.Base
 import HTML.Frames
+import Bindrop.State.Users
 
-about :: Html
-about = baseHtml $ do
+about :: Maybe User -> Html
+about u = baseHtml $ do
   let gitLink = "https://github.com/mcmaniac/bindrop"
   H.head $ do
     H.title "About"
   H.body $ do
     H.header $ mainHeader
-    mainMenu
+    mainMenu u
     H.div ! A.id "about" $ do
       H.h2 "About bindrop"
       H.p $ do

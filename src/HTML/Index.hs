@@ -8,27 +8,37 @@ import Text.Blaze.Html5.Attributes as A
 
 import HTML.Base
 import HTML.Frames
+import Bindrop.State.Users
 
-index :: Html -> Html
-index mostRecentUploadList = baseHtml $ do
+index :: Maybe User -> Html -> Html
+index u mostRecentUploadList = baseHtml $ do
   H.head $ do
     H.title "bindrop"
   H.body $ do
     H.header $ mainHeader
-    mainMenu
+    mainMenu u
+    case u of
+      (Just u) -> do
+        H.div ! A.id "new-upload" $ do
+          H.h2 "New Upload:"
 
-    H.div ! A.id "new-upload" $ do
-      H.h2 "New Upload:"
-
-      H.form ! enctype "multipart/form-data"
-             ! action "/"
-             ! A.method "post" $ do
-               H.label "Upload a file: " >> input ! A.type_ "file"
-                                                  ! A.name "fileUpload"
-                                                  ! A.size "50"
-               input ! type_ "submit"
-                     ! name "upload"
-                     ! value "Upload"
+          H.form ! enctype "multipart/form-data"
+                 ! action "/"
+                 ! A.method "post" $ do
+                   H.label "Upload a file: " >> input ! A.type_ "file"
+                                                      ! A.name "fileUpload"
+                                                      ! A.size "50"
+                   input ! type_ "submit"
+                         ! name "upload"
+                         ! value "Upload"
+      Nothing -> do
+        H.div ! A.id "new-upload" $ do
+          H.br
+          H.br
+          H.br
+          H.p $ do "You must "
+                   a ! href ("/u") $ "log in"
+                   " to upload files"
 
     H.div ! A.id "recent" $ do
       H.br

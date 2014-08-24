@@ -10,9 +10,10 @@ import Text.Blaze.Html5.Attributes as A
 import HTML.Base
 import HTML.Frames
 import Bindrop.State.UploadDB
+import Bindrop.State.Users
 
-viewDownload :: FileUpload -> Html
-viewDownload file = baseHtml $ do
+viewDownload :: Maybe User -> FileUpload -> Html
+viewDownload u file = baseHtml $ do
   H.head $ do
     H.title "Download"
 
@@ -24,7 +25,7 @@ viewDownload file = baseHtml $ do
 
   H.body $ do
     H.header $ mainHeader
-    mainMenu
+    mainMenu u
     H.div ! A.id "file-info" $ do
       H.p (H.toHtml $ "Original file name: "   ++ filename)
       H.p (H.toHtml $ "File name on server: "  ++ sfilename)

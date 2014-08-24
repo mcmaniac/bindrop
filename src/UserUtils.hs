@@ -102,7 +102,7 @@ loginPart acid =
              ok $ toResponse $ loginSuccessful mU
            else do
              putSession $ SessionData Nothing
-             ok $ toResponse $ loginFailed
+             ok $ toResponse $ loginFailed Nothing
 
        _ -> mzero
 
@@ -111,4 +111,13 @@ isUniqueUser user =
   case user of
     (Just user) -> False
     Nothing     -> True
+
+logoutPart :: ClientSessionT SessionData (ServerPartT IO) Response
+logoutPart = do
+  expireSession
+  ok $ toResponse $ logout
+
+myAcctPart :: Maybe User -> ClientSessionT SessionData (ServerPartT IO) Response
+myAcctPart u = do
+  ok $ toResponse $ myAcct u
 

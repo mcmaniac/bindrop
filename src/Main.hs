@@ -77,33 +77,43 @@ httpsForward = withHost $ \h -> uriRest $ \r -> do
 
 mainRoute :: AcidState BindropState ->
   ClientSessionT SessionData (ServerPartT IO) Response
-mainRoute acid =
+mainRoute acid = do
+  u <- getSession
+  let mU = u ^. user
+
   do decodeBody myPolicy
-     msum [ indexPart acid
+     msum [ indexPart mU acid -- update index with file uploads
+
           , do -- the "/" index page
             nullDir
             indexMostRecent acid
 
           , do -- to view download info
-            dir "f" $ path $ \fileName -> fpart acid fileName
+            dir "f" $ path $ \fileName -> fpart mU acid fileName
 
           , do -- to download:
             dir "s" $ path $ \fileName -> spart acid fileName
 
           , do -- user login page
-            dir "u" $ ok $ toResponse $ loginPage
+            dir "u" $ ok $ toResponse $ loginPage mU
 
           , do -- process login
             dir "pl" $ loginPart acid
 
           , do -- user registration page
-            dir "r" $ ok $ toResponse $ register
+            dir "r" $ ok $ toResponse $ register mU
+
+          , do -- logout
+            dir "l" $ logoutPart
+
+          , do -- my account page
+            dir "m" $ myAcctPart mU
 
           , do -- process registration
             dir "pr" $ uRegisterPart acid
 
           , do -- about page
-            dir "a" $ ok $ toResponse $ about
+            dir "a" $ ok $ toResponse $ about mU
 
           , do -- server files from "/static/"
             dir "static" $ serveDirectory DisableBrowsing [] "static"
@@ -120,25 +130,29 @@ indexMostRecent :: AcidState BindropState ->
 indexMostRecent acid = do
   now <- liftIO $ getCurrentTime
   mostRecent <- query' acid (MostRecentUploads now)
+  --get user info
+  u <- getSession
+  let mU = u ^. user
   ok $ toResponse $ baseHtml $ do
-    index $ mapM_ recentFile mostRecent
+    index mU $ mapM_ recentFile mostRecent
 
-indexPart :: AcidState BindropState ->
+indexPart :: Maybe User -> AcidState BindropState ->
   ClientSessionT SessionData (ServerPartT IO) Response
-indexPart acid =
+indexPart mU acid =
   do method [GET, POST]
      u <- lookFile "fileUpload"
      let uName = getFileName u
 
      case uName of
        "" -> indexMostRecent acid  --no file was selected on the form
-       _  -> handleFile acid u
+       _  -> handleFile mU acid u
 
 handleFile
-  :: AcidState BindropState
+  :: Maybe User
+  -> AcidState BindropState
   -> (FilePath, FilePath, ContentType)
   -> ClientSessionT SessionData (ServerPartT IO) Response
-handleFile acid u = do
+handleFile mU acid u = do
   let uName = getFileName u
   let uPath = getFilePath u
   newName <- liftIO $ moveToRandomFile uploadDir 11 uPath
@@ -166,7 +180,7 @@ handleFile acid u = do
                                & uploadTime   .~ t
            _ <- update' acid (UpdateUpload updatedFile)
 
-           ok $ toResponse $ upload updatedFile
+           ok $ toResponse $ upload mU updatedFile
       ]
     _ -> mzero -- FIXME
 
@@ -179,13 +193,13 @@ getFileName (_, name, _) = name
 --getFileContents :: (FilePath, FilePath, ContentType) -> FilePath
 --getFileContents (_, _, contents) =
 
-fpart :: AcidState BindropState -> String ->
+fpart :: Maybe User -> AcidState BindropState -> String ->
   ClientSessionT SessionData (ServerPartT IO) Response
-fpart acid s = do
+fpart u acid s = do
   file <- query' acid (FileBySName s)
   case file of
     (Just file) -> do
-      ok $ toResponse $ viewDownload file
+      ok $ toResponse $ viewDownload u file
     _ -> mzero
 
 --serve the file response to dir "s"

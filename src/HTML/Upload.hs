@@ -10,9 +10,10 @@ import Text.Blaze.Html5.Attributes as A
 import HTML.Base
 import HTML.Frames
 import Bindrop.State.UploadDB
+import Bindrop.State.Users
 
-upload :: FileUpload -> Html
-upload f = baseHtml $ do
+upload :: Maybe User -> FileUpload -> Html
+upload u f = baseHtml $ do
   H.head $ do
     H.title "File Information"
 
@@ -25,7 +26,7 @@ upload f = baseHtml $ do
 
             H.body $ do
               H.header $ mainHeader
-              mainMenu
+              mainMenu u
               H.div ! A.id "file-info" $ do
                 H.p (H.toHtml $ "file location: "     ++ filePath)
                 H.p (H.toHtml $ "uploaded name: "     ++ fileName)
