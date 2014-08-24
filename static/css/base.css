@@ -73,18 +73,17 @@ header {
 }
 
 #new-upload {
-  display:           inline;
+  display:           block;
   position:          absolute;
   margin:            0px 0px 0px 240px;
   padding-left:      10px;
-  padding-bottom:    15px;
   padding-right:     32px;
 }
 
 #recent {
   display:           inline;
   position:          absolute;
-  margin:            128px 0px 0px 240px;
+  margin:            150px 0px 0px 240px;
   padding-left:      10px;
 }
 
@@ -164,5 +163,16 @@ form input[type=reset] {
 
 form input[type=submit]:hover {
   text-decoration: underline;
+}
+
+#public-checkbox{
+  display: inline-block;
+  padding-top: 10px;
+  font-size: 10px;
+}
+
+#file-submit{
+  display: block;
+  padding-left: 4px;
 }
 
