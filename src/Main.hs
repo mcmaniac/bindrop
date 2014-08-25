@@ -10,6 +10,7 @@ import Control.Lens.Operators
 import Data.Acid
 import Data.Acid.Local    ( createCheckpointAndClose )
 import Data.Acid.Advanced ( query', update' )
+import qualified Data.ByteString.Char8 as B
 import Data.Time          ( getCurrentTime )
 
 import Happstack.Server
@@ -157,12 +158,15 @@ handleFile
   -> (FilePath, FilePath, ContentType)
   -> ClientSessionT SessionData (ServerPartT IO) Response
 handleFile mU acid u = do
-  let uName = getFileName u
+  let uname = getFileName u
   let uPath = getFilePath u
   newName <- liftIO $ moveToRandomFile uploadDir 11 uPath
-  let vName = uName
+  let vName = uname
   let vPath = newName
   let vSName = drop (length uploadDir) vPath
+
+  --uploading user's user name
+  let username = UserName $ (extractUser mU) ^. uName
 
   --acid stuff here
   --create new
@@ -182,12 +186,19 @@ handleFile mU acid u = do
                                & fname        .~ vName
                                & sfname       .~ vSName
                                & uploadTime   .~ t
+                               & userName     .~ username
 
            _ <- update' acid (UpdateUpload updatedFile)
 
            ok $ toResponse $ upload mU updatedFile
       ]
     _ -> mzero -- FIXME
+
+extractUser :: Maybe User -> User
+extractUser u =
+  case u of
+    (Just u) -> u
+    Nothing  -> User 0 "" "" (B.pack "")
 
 getFilePath :: (FilePath, FilePath, ContentType) -> FilePath
 getFilePath (fp, _, _) = fp

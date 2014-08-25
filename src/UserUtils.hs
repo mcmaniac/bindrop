@@ -132,9 +132,9 @@ myUploadsPart acid u = do
     (Just u) -> do
       let username = UserName $ u ^. uName
       userUploads <- query' acid (UploadsByUserName username)
-      s <- getSession --convenient Maybe User
+      s <- getSession --convenient Maybe User, make more elegant later
       let mU = s ^. user
-      ok $ toResponse $ do --baseHtml $ do
+      ok $ toResponse $ do
         myUploads mU $ mapM_ uploadedFile userUploads
 
     Nothing -> mzero

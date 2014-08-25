@@ -80,7 +80,7 @@ uploadsByUserName u = do
   db <- ask
   let files' = toDescList
         (IxSet.Proxy :: IxSet.Proxy UTCTime) $
-        (db ^. fileDB . files) @< u
+        (db ^. fileDB . files) @= u
   return files'
 
 -- Users
