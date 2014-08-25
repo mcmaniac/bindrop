@@ -9,8 +9,8 @@ import Text.Blaze.Html5.Attributes as A
 
 import Bindrop.State.UploadDB
 
-recentFile :: FileUpload -> Html
-recentFile file = toHtml $ do
+uploadedFile :: FileUpload -> Html
+uploadedFile file = toHtml $ do
   let fileName = file ^. fname
   let fileTime = file ^. uploadTime
   let dlLink   = "/s/" ++ file ^. sfname

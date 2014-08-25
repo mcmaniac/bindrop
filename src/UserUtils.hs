@@ -23,10 +23,13 @@ import Data.Data ( Data, Typeable )
 import Data.SafeCopy ( base, deriveSafeCopy )
 
 import Bindrop.State
+import Bindrop.State.UploadDB
 import Bindrop.State.Users
 import HTML.Index
+import HTML.File
 import HTML.Login
 import HTML.Register
+import HTML.Upload
 
 --cookie
 data SessionData = SessionData
@@ -120,4 +123,19 @@ logoutPart = do
 myAcctPart :: Maybe User -> ClientSessionT SessionData (ServerPartT IO) Response
 myAcctPart u = do
   ok $ toResponse $ myAcct u
+
+myUploadsPart :: AcidState BindropState
+  -> Maybe User
+  -> ClientSessionT SessionData (ServerPartT IO) Response
+myUploadsPart acid u = do
+  case u of
+    (Just u) -> do
+      let username = UserName $ u ^. uName
+      userUploads <- query' acid (UploadsByUserName username)
+      s <- getSession --convenient Maybe User
+      let mU = s ^. user
+      ok $ toResponse $ do --baseHtml $ do
+        myUploads mU $ mapM_ uploadedFile userUploads
+
+    Nothing -> mzero
 

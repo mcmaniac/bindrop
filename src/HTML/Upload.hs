@@ -35,3 +35,16 @@ upload u f = baseHtml $ do
                 H.p (H.toHtml $ "link to file info: " ++ infoLink)
                 H.p (H.toHtml $ "public: "            ++ show privacy)
 
+myUploads :: Maybe User -> Html -> Html
+myUploads u userUploadList = baseHtml $ do
+  H.head $ do
+    H.title "my uploads"
+  H.body $ do
+    H.header $ mainHeader
+    mainMenu u
+
+    H.div ! A.id "user-uploads" $ do
+      H.h2 "My uploads"
+      H.br
+      userUploadList
+

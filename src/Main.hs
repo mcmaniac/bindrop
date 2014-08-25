@@ -106,8 +106,11 @@ mainRoute acid = do
           , do -- logout
             dir "l" $ logoutPart
 
-          , do -- my account page / user specific uploads
+          , do -- my account page
             dir "m" $ myAcctPart mU
+
+          , do -- user specific uploads
+            dir "mu" $ myUploadsPart acid mU
 
           , do -- process registration
             dir "pr" $ uRegisterPart acid
@@ -134,7 +137,7 @@ indexMostRecent acid = do
   u <- getSession
   let mU = u ^. user
   ok $ toResponse $ baseHtml $ do
-    index mU $ mapM_ recentFile mostRecent
+    index mU $ mapM_ uploadedFile mostRecent
 
 indexPart :: Maybe User -> AcidState BindropState ->
   ClientSessionT SessionData (ServerPartT IO) Response

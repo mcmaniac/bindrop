@@ -40,6 +40,7 @@ initialBindropState = BindropState (initialUploadDBState) (initialUsersState)
 newUpload :: UTCTime -> Update BindropState FileUpload
 newUpload t = do f <- get
                  let file = FileUpload (f ^. fileDB . nextFileID) "" "" "" t True
+                            (UserName "")
                  put $ f & fileDB . nextFileID %~ succ
                          & fileDB . files      %~ IxSet.insert file
                  return file
@@ -72,6 +73,14 @@ mostRecentUploads now = do
         toDescList
         (IxSet.Proxy :: IxSet.Proxy UTCTime) $
         (db ^. fileDB . files) @< now
+  return files'
+
+uploadsByUserName :: UserName -> Query BindropState [FileUpload]
+uploadsByUserName u = do
+  db <- ask
+  let files' = toDescList
+        (IxSet.Proxy :: IxSet.Proxy UTCTime) $
+        (db ^. fileDB . files) @< u
   return files'
 
 -- Users
@@ -114,6 +123,7 @@ $(makeAcidic ''BindropState
   , 'fileByID
   , 'fileBySName
   , 'mostRecentUploads
+  , 'uploadsByUserName
   , 'newUser
   , 'updateUser
   , 'userByID

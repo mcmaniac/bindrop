@@ -22,14 +22,14 @@ mainMenu u = do
     H.ul $ do -- ! A.id "menu" $ do
       case u of
         (Just u) -> do
-          H.li $ H.a ! A.href "/" $ "Home"
-          H.li $ H.a ! A.href "/m" $ "My account"
-          H.li $ H.a ! A.href "/l" $ "Logout"
-          H.li $ H.p ""
-          H.li $ H.a ! A.href "/a" $ "About"
+          H.li $ H.a ! A.href "/"   $ "Home"
+          H.li $ H.a ! A.href "/m"  $ "My account"
+          H.li $ H.a ! A.href "/mu" $ "My uploads"
+          H.li $ H.a ! A.href "/l"  $ "Logout"
+          H.li $ H.a ! A.href "/a"  $ "About"
 
         Nothing -> do
-          H.li $ H.a ! A.href "/" $ "Home"
+          H.li $ H.a ! A.href "/"  $ "Home"
           H.li $ H.a ! A.href "/u" $ "Login"
           H.li $ H.p ""
           H.li $ H.p ""
