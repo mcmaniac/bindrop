@@ -25,23 +25,16 @@ index u mostRecentUploadList = baseHtml $ do
           H.form ! enctype "multipart/form-data"
                  ! action "/"
                  ! A.method "post" $ do
-                   H.label "Upload a file: " >> input ! A.type_ "file"
-                                                      ! A.name "fileUpload"
-                                                      ! A.size "50"
+            H.label "Upload a file: " >> input ! A.type_ "file"
+                                               ! A.name "fileUpload"
+                                               ! A.size "50"
 
-                   H.br
-                   --privacy checkbox
-                   H.div ! A.id "public-checkbox" $ do
-                     input ! type_ "checkbox"
-                           ! name "public"
-                           ! value "Public"
-                           ! checked "True" >> H.label "public"
+            H.br
 
-                   --submit button
-                   H.div ! A.id "file-submit" $ do
-                     input ! type_ "submit"
-                           ! name "upload"
-                           ! value "Upload"
+            --submit button
+            input ! type_ "submit"
+                  ! name "upload"
+                  ! value "Upload"
 
       Nothing -> do
         H.div ! A.id "new-upload" $ do

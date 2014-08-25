@@ -104,7 +104,7 @@ loginPart acid =
              putSession $ SessionData Nothing
              ok $ toResponse $ loginFailed Nothing
 
-       _ -> mzero
+       _ -> ok $ toResponse $ loginFailed Nothing
 
 isUniqueUser :: Maybe User -> Bool
 isUniqueUser user =

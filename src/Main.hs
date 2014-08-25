@@ -106,7 +106,7 @@ mainRoute acid = do
           , do -- logout
             dir "l" $ logoutPart
 
-          , do -- my account page
+          , do -- my account page / user specific uploads
             dir "m" $ myAcctPart mU
 
           , do -- process registration
@@ -141,6 +141,7 @@ indexPart :: Maybe User -> AcidState BindropState ->
 indexPart mU acid =
   do method [GET, POST]
      u <- lookFile "fileUpload"
+
      let uName = getFileName u
 
      case uName of
@@ -178,6 +179,7 @@ handleFile mU acid u = do
                                & fname        .~ vName
                                & sfname       .~ vSName
                                & uploadTime   .~ t
+
            _ <- update' acid (UpdateUpload updatedFile)
 
            ok $ toResponse $ upload mU updatedFile

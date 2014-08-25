@@ -22,6 +22,7 @@ upload u f = baseHtml $ do
             let filePath = file ^. fpath
             let fileName = file ^. fname
             let fileTime = file ^. uploadTime
+            let privacy  = file ^. public
             let infoLink = "localhost:8082/f/"    ++ file ^. sfname
 
             H.body $ do
@@ -32,4 +33,5 @@ upload u f = baseHtml $ do
                 H.p (H.toHtml $ "uploaded name: "     ++ fileName)
                 H.p (H.toHtml $ "time of upload: "    ++ show fileTime)
                 H.p (H.toHtml $ "link to file info: " ++ infoLink)
+                H.p (H.toHtml $ "public: "            ++ show privacy)
 

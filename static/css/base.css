@@ -165,14 +165,3 @@ form input[type=submit]:hover {
   text-decoration: underline;
 }
 
-#public-checkbox{
-  display: inline-block;
-  padding-top: 10px;
-  font-size: 10px;
-}
-
-#file-submit{
-  display: block;
-  padding-left: 4px;
-}
-
