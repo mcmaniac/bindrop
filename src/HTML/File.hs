@@ -54,7 +54,7 @@ uploadedFile mU file = toHtml $ do
               H.div ! A.id "privacyButton" $ do
                 input ! type_ "submit"
                       ! name "makePrivate"
-                      ! value "Make Private"
+                      ! value "-> Private"
           False -> do
             H.form ! action (toValue privacyDir)
                    ! A.method "post" $ do
@@ -62,7 +62,7 @@ uploadedFile mU file = toHtml $ do
               H.div ! A.id "privacyButton" $ do
                 input ! type_ "submit"
                       ! name "makePublic"
-                      ! value "Make Public"
+                      ! value "-> Public"
       else H.p ""
 
 
