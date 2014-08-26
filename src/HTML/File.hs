@@ -38,11 +38,11 @@ uploadedFile mU file = toHtml $ do
   let privacyDir = "/mp/" ++ file ^. sfname
 
   H.div ! A.id "uploadInfo" $ do
-    H.p $ do
-      a ! href (toValue dlLink) $ H.toHtml fileName
-    H.p (H.toHtml $ show fileTime)
-    H.p (H.toHtml $ infoLink)
-    H.p (H.toHtml $ "Public? -> " ++ show privacyStatus)
+    H.ul $ do
+      H.li $ a ! href (toValue dlLink) $ H.toHtml fileName
+      H.li (H.toHtml $ show fileTime)
+      H.li (H.toHtml $ infoLink)
+      H.li (H.toHtml $ "Public :: " ++ show privacyStatus)
 
     if (userName == uploader)
       then do
@@ -51,16 +51,18 @@ uploadedFile mU file = toHtml $ do
             H.form ! action (toValue privacyDir)
                    ! A.method "post" $ do
               --privacy button
-              input ! type_ "submit"
-                    ! name "makePrivate"
-                    ! value "Make Private"
+              H.div ! A.id "privacyButton" $ do
+                input ! type_ "submit"
+                      ! name "makePrivate"
+                      ! value "Make Private"
           False -> do
             H.form ! action (toValue privacyDir)
                    ! A.method "post" $ do
               --privacy button
-              input ! type_ "submit"
-                    ! name "makePublic"
-                    ! value "Make Public"
+              H.div ! A.id "privacyButton" $ do
+                input ! type_ "submit"
+                      ! name "makePublic"
+                      ! value "Make Public"
       else H.p ""
 
 

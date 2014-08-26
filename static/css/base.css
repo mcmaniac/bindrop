@@ -107,27 +107,42 @@ header {
   border: 1px solid #666;
   width: 650px;
   padding: 5px;
-  margin-top: 16px;
+  margin-bottom: 16px;
   border-radius: 3px;
   color: white;
   font-size: 11px;
   box-shadow: 3px 3px 10px #666;
 }
 
-#uploadInfo p {
-  margin: 0;
+#uploadInfo ul {
+  margin: 0px;
   padding: 4px;
+  width: 300px;
+  display: inline-block;
+  list-style-type: none;
 }
 
 #uploadInfo a {
   color: DarkRed;
 }
 
+#uploadInfo ul li {
+  display: inline-block;
+  width: 300px;
+  margin: 2px;
+}
+
 #uploadInfo form input[type=submit] {
   display: inline-block;
   margin-left: 533px;
-  position: absolute;
-  top: 70%;
+}
+
+#privacyButton {
+  display: inline-block;
+  position: relative;
+  float: right;
+  top: -40px;
+  margin-bottom: -100px;
 }
 
 #register-form,
