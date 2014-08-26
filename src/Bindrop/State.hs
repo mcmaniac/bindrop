@@ -70,6 +70,7 @@ mostRecentUploads now = do
   db <- ask
   let files' =
         take 20 $
+        filter (\x -> x ^. public == True) $
         toDescList
         (IxSet.Proxy :: IxSet.Proxy UTCTime) $
         (db ^. fileDB . files) @< now

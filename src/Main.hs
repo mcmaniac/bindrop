@@ -5,6 +5,7 @@ module Main where
 import Control.Monad
 import Control.Monad.IO.Class
 import Control.Exception  ( bracket )
+import Control.Lens.Iso   ( non )
 import Control.Lens.Operators
 
 import Data.Acid
@@ -26,6 +27,7 @@ import HTML.Upload
 import HTML.Download
 import HTML.Register
 import HTML.Login
+import Session
 import FileUtils
 import UserUtils
 import Bindrop.State
@@ -61,8 +63,8 @@ main = do
   -- HTTPS server
   --simpleHTTPS httpsConf mainHttp
 
-mainHttp :: AcidState BindropState ->
-  ClientSessionT SessionData (ServerPartT IO) Response
+mainHttp :: AcidState BindropState
+  -> ClientSessionT SessionData (ServerPartT IO) Response
 mainHttp acid = do
   _ <- compressedResponseFilter
   mainRoute acid
@@ -76,11 +78,11 @@ httpsForward = withHost $ \h -> uriRest $ \r -> do
   seeOther url (toResponse $ "Forwarding to: " ++ url ++ "\n")
 
 
-mainRoute :: AcidState BindropState ->
-  ClientSessionT SessionData (ServerPartT IO) Response
+mainRoute :: AcidState BindropState
+  -> ClientSessionT SessionData (ServerPartT IO) Response
 mainRoute acid = do
-  u <- getSession
-  let mU = u ^. user
+  s <- getSession
+  let mU = s ^. sessionUser
 
   do decodeBody myPolicy
      msum [ indexPart mU acid -- update index with file uploads
@@ -113,6 +115,9 @@ mainRoute acid = do
           , do -- user specific uploads
             dir "mu" $ myUploadsPart acid mU
 
+          , do -- make a file private via button
+            dir "mp" $ path $ \fileName -> makePrivatePart acid fileName --lmao private part
+
           , do -- process registration
             dir "pr" $ uRegisterPart acid
 
@@ -135,10 +140,11 @@ indexMostRecent acid = do
   now <- liftIO $ getCurrentTime
   mostRecent <- query' acid (MostRecentUploads now)
   --get user info
-  u <- getSession
-  let mU = u ^. user
+  s <- getSession
+  let u = s ^. sessionUser . non(User 0 "" "" $ B.pack "")
+  let mU = s ^. sessionUser
   ok $ toResponse $ baseHtml $ do
-    index mU $ mapM_ uploadedFile mostRecent
+    index mU $ mapM_ recentUpload mostRecent
 
 indexPart :: Maybe User -> AcidState BindropState ->
   ClientSessionT SessionData (ServerPartT IO) Response
@@ -194,12 +200,6 @@ handleFile mU acid u = do
       ]
     _ -> mzero -- FIXME
 
-extractUser :: Maybe User -> User
-extractUser u =
-  case u of
-    (Just u) -> u
-    Nothing  -> User 0 "" "" (B.pack "")
-
 getFilePath :: (FilePath, FilePath, ContentType) -> FilePath
 getFilePath (fp, _, _) = fp
 
@@ -232,4 +232,22 @@ spart acid s = do
         ("attachment; filename=\"" ++ trueName ++ "\"")
         response
     _ -> mzero --FIXME
+
+makePrivatePart :: AcidState BindropState
+  -> String
+  -> ClientSessionT SessionData (ServerPartT IO) Response
+makePrivatePart acid fName = do
+  f <- query' acid (FileBySName fName)
+  case f of
+    (Just f) -> do method POST
+                   let currentPrivacy = f ^. public
+                   let updatedFile = f & public .~ not currentPrivacy
+                   s <- getSession
+                   let mU = s ^. sessionUser
+
+                   _ <- update' acid (UpdateUpload updatedFile)
+
+                   ok $ toResponse $ makePrivate updatedFile mU
+
+    _ -> mzero -- FIXME
 

@@ -5,7 +5,6 @@ module UserUtils where
 import Control.Monad
 import Control.Monad.IO.Class
 import Control.Lens.Operators
-import Control.Lens.TH ( makeLenses )
 
 import Crypto.Scrypt
 
@@ -19,28 +18,16 @@ import Happstack.Server.ClientSession
 
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Char8 as C
-import Data.Data ( Data, Typeable )
-import Data.SafeCopy ( base, deriveSafeCopy )
 
 import Bindrop.State
 import Bindrop.State.UploadDB
 import Bindrop.State.Users
+import Session
 import HTML.Index
 import HTML.File
 import HTML.Login
 import HTML.Register
 import HTML.Upload
-
---cookie
-data SessionData = SessionData
-  { _user :: Maybe User
-  } deriving (Eq, Ord, Show, Data, Typeable)
-
-$(makeLenses ''SessionData)
-$(deriveSafeCopy 0 'base ''SessionData)
-
-instance ClientSession SessionData where
-  emptySession = SessionData { _user = Nothing }
 
 mkEncrypted :: B.ByteString -> IO EncryptedPass
 mkEncrypted pw = encryptPassIO defaultParams (Pass pw)
@@ -101,7 +88,7 @@ loginPart acid =
          if match
            then do
              u <- getSession
-             let mU = u ^. user
+             let mU = u ^.sessionUser
              ok $ toResponse $ loginSuccessful mU
            else do
              putSession $ SessionData Nothing
@@ -131,11 +118,17 @@ myUploadsPart acid u = do
   case u of
     (Just u) -> do
       let username = UserName $ u ^. uName
+      s <- getSession
+      let mU = s ^. sessionUser
       userUploads <- query' acid (UploadsByUserName username)
-      s <- getSession --convenient Maybe User, make more elegant later
-      let mU = s ^. user
       ok $ toResponse $ do
-        myUploads mU $ mapM_ uploadedFile userUploads
+        myUploads mU $ mapM_ (uploadedFile u) userUploads
 
     Nothing -> mzero
+
+extractUser :: Maybe User -> User
+extractUser u =
+  case u of
+    (Just u) -> u
+    Nothing  -> User 0 "" "" (C.pack "")
 
