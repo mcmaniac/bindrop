@@ -1,8 +1,10 @@
-{-# LANGUAGE OverloadedStrings, RecordWildCards #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module HTML.Upload where
 
 import Control.Lens.Operators
+import Data.Time.Format
+import System.Locale
 import Text.Blaze.Html
 import Text.Blaze.Html5 as H
 import Text.Blaze.Html5.Attributes as A
@@ -29,9 +31,9 @@ upload u f = baseHtml $ do
               H.header $ mainHeader
               mainMenu u
               H.div ! A.id "file-info" $ do
-                H.p (H.toHtml $ "file location: "     ++ filePath)
                 H.p (H.toHtml $ "uploaded name: "     ++ fileName)
-                H.p (H.toHtml $ "time of upload: "    ++ show fileTime)
+                H.p (H.toHtml $ "time of upload: "    ++
+                  formatTime defaultTimeLocale "%H:%M - %a %Y.%m.%d" fileTime)
                 H.p (H.toHtml $ "link to file info: " ++ infoLink)
                 H.p (H.toHtml $ "public: "            ++ show privacy)
 

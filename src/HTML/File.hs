@@ -4,6 +4,8 @@ module HTML.File where
 
 import Control.Lens.Operators
 import Control.Lens.Iso ( non )
+import Data.Time.Format
+import System.Locale
 import Text.Blaze.Html
 import Text.Blaze.Html5 as H
 import Text.Blaze.Html5.Attributes as A
@@ -23,7 +25,7 @@ recentUpload file = toHtml $ do
   H.div ! A.id "uploadInfo" $ do
     H.p $ do
       a ! href (toValue dlLink) $ H.toHtml fileName
-    H.p (H.toHtml $ show fileTime)
+    H.p (H.toHtml $ formatTime defaultTimeLocale "%H:%M - %a %Y.%m.%d" fileTime)
     H.p (H.toHtml $ infoLink)
 
 uploadedFile :: User -> FileUpload -> Html
@@ -40,7 +42,7 @@ uploadedFile mU file = toHtml $ do
   H.div ! A.id "uploadInfo" $ do
     H.ul $ do
       H.li $ a ! href (toValue dlLink) $ H.toHtml fileName
-      H.li (H.toHtml $ show fileTime)
+      H.li (H.toHtml $ formatTime defaultTimeLocale "%H:%M - %a %Y.%m.%d" fileTime)
       H.li (H.toHtml $ infoLink)
       H.li (H.toHtml $ "Public :: " ++ show privacyStatus)
 

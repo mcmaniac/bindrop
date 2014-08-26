@@ -23,7 +23,7 @@ executable bindrop
                        transformers, directory, mtl,
                        blaze-html, bytestring,  
                        happstack-server, happstack-clientsession,
-                       happstack-server-tls,
+                       happstack-server-tls, old-locale,
                        random, acid-state, ixset, safecopy,
                        lens, scrypt, time
   hs-source-dirs:      src

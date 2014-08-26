@@ -3,6 +3,8 @@
 module HTML.Download where
 
 import Control.Lens.Operators
+import Data.Time.Format
+import System.Locale
 import Text.Blaze.Html
 import Text.Blaze.Html5 as H
 import Text.Blaze.Html5.Attributes as A
@@ -27,10 +29,9 @@ viewDownload u file = baseHtml $ do
     H.header $ mainHeader
     mainMenu u
     H.div ! A.id "file-info" $ do
-      H.p (H.toHtml $ "Original file name: "   ++ filename)
-      H.p (H.toHtml $ "File name on server: "  ++ sfilename)
-      H.p (H.toHtml $ "File path: "            ++ filepath)
-      H.p (H.toHtml $ "Uploaded at: "          ++ show fileTime)
+      H.p (H.toHtml $ "Original file name: " ++ filename)
+      H.p (H.toHtml $ "Uploaded at: "        ++
+        formatTime defaultTimeLocale "%H:%M - %a %Y.%m.%d" fileTime)
       H.p $ do "Click "
                a ! href (toValue dlLink) $ "here"
                " to download the file."
