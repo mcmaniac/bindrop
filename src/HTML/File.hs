@@ -52,14 +52,14 @@ uploadedFile mU file = toHtml $ do
                    ! A.method "post" $ do
               --privacy button
               input ! type_ "submit"
-                    ! name "private"
+                    ! name "makePrivate"
                     ! value "Make Private"
           False -> do
             H.form ! action (toValue privacyDir)
                    ! A.method "post" $ do
               --privacy button
               input ! type_ "submit"
-                    ! name "public"
+                    ! name "makePublic"
                     ! value "Make Public"
       else H.p ""
 

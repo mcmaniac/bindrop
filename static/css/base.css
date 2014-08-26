@@ -114,13 +114,20 @@ header {
   box-shadow: 3px 3px 10px #666;
 }
 
-#recentInfo p {
+#uploadInfo p {
   margin: 0;
   padding: 4px;
 }
 
-#recentInfo a {
+#uploadInfo a {
   color: DarkRed;
+}
+
+#uploadInfo form input[type=submit] {
+  display: inline-block;
+  margin-left: 533px;
+  position: absolute;
+  top: 70%;
 }
 
 #register-form,
@@ -131,7 +138,6 @@ header {
   padding-left:      10px;
   padding-bottom:    15px;
   padding-right:     32px;
-
 }
 
 #register-form label,
