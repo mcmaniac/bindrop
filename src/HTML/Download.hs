@@ -29,6 +29,7 @@ viewDownload u file = baseHtml $ do
     H.header $ mainHeader
     mainMenu u
     H.div ! A.id "file-info" $ do
+      H.h2 "Download"
       H.p (H.toHtml $ "Original file name: " ++ filename)
       H.p (H.toHtml $ "Uploaded at: "        ++
         formatTime defaultTimeLocale "%H:%M - %a %Y.%m.%d" fileTime)

@@ -86,10 +86,7 @@ loginPart acid =
          let match    = verifyPass' userPass $ EncryptedPass (mUser ^. uPass)
 
          if match
-           then do
-             u <- getSession
-             let mU = u ^.sessionUser
-             ok $ toResponse $ loginSuccessful mU
+           then ok $ toResponse $ loginSuccessful (Just mUser)
            else do
              putSession $ SessionData Nothing
              ok $ toResponse $ loginFailed Nothing
@@ -118,11 +115,9 @@ myUploadsPart acid u = do
   case u of
     (Just u) -> do
       let username = UserName $ u ^. uName
-      s <- getSession
-      let mU = s ^. sessionUser
       userUploads <- query' acid (UploadsByUserName username)
       ok $ toResponse $ do
-        myUploads mU $ mapM_ (uploadedFile u) userUploads
+        myUploads (Just u) $ mapM_ (uploadedFile u) userUploads
 
     Nothing -> mzero
 
@@ -130,5 +125,5 @@ extractUser :: Maybe User -> User
 extractUser u =
   case u of
     (Just u) -> u
-    Nothing  -> User 0 "" "" (C.pack "")
+    Nothing  -> User 0 "" "" (C.pack "") 0
 

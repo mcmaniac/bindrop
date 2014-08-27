@@ -88,7 +88,7 @@ uploadsByUserName u = do
 -- create a new empty user
 newUser :: Update BindropState User
 newUser = do u <- get
-             let user = User (u ^. userDB . nextUserID) "" "" ""
+             let user = User (u ^. userDB . nextUserID) "" "" "" 0
              put $ u & userDB . nextUserID %~ succ
                      & userDB . users      %~ IxSet.insert user
              return user

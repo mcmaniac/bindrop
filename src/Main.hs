@@ -1,5 +1,3 @@
-{-# LANGUAGE RecordWildCards #-}
-
 module Main where
 
 import Control.Monad
@@ -141,7 +139,6 @@ indexMostRecent acid = do
   mostRecent <- query' acid (MostRecentUploads now)
   --get user info
   s <- getSession
-  let u = s ^. sessionUser . non(User 0 "" "" $ B.pack "")
   let mU = s ^. sessionUser
   ok $ toResponse $ baseHtml $ do
     index mU $ mapM_ recentUpload mostRecent
@@ -171,34 +168,54 @@ handleFile mU acid u = do
   let vPath = newName
   let vSName = drop (length uploadDir) vPath
 
-  --uploading user's user name
+  --uploader's user name
   let username = UserName $ (extractUser mU) ^. uName
 
   --acid stuff here
-  --create new
+  --create new file
   t <- liftIO $ getCurrentTime
-
   file <- update' acid (NewUpload t)
-
   let fID = file ^. fileID
 
   --edit the newly created file upload
   mFile <- query' acid (FileByID fID)
 
   case mFile of
-    (Just f@(FileUpload{..})) -> msum
-      [ do method POST
-           let updatedFile = f & fpath        .~ vPath
-                               & fname        .~ vName
-                               & sfname       .~ vSName
-                               & uploadTime   .~ t
-                               & userName     .~ username
+    (Just mFile) -> do
+      method POST
+      let updatedFile = mFile & fpath        .~ vPath
+                              & fname        .~ vName
+                              & sfname       .~ vSName
+                              & uploadTime   .~ t
+                              & userName     .~ username
 
-           _ <- update' acid (UpdateUpload updatedFile)
+      _ <- update' acid (UpdateUpload updatedFile)
 
-           ok $ toResponse $ upload mU updatedFile
-      ]
+      updateUserCount acid updatedFile mU
+
     _ -> mzero -- FIXME
+
+updateUserCount :: AcidState BindropState
+  -> FileUpload
+  -> Maybe User
+  -> ClientSessionT SessionData (ServerPartT IO) Response
+updateUserCount acid f u = do
+  let mU = u
+  case u of
+    (Just u) -> do
+      method POST
+      let updatedUser = u & userID .~ u ^. userID
+                          & uName  .~ u ^. uName
+                          & uEmail .~ u ^. uEmail
+                          & uPass  .~ u ^. uPass
+                          & count  %~ succ
+      _ <- update' acid (UpdateUser updatedUser)
+
+      -- update cookie
+      putSession $ SessionData $ Just updatedUser
+
+      ok $ toResponse $ upload mU f
+    _ -> mzero --FIXME
 
 getFilePath :: (FilePath, FilePath, ContentType) -> FilePath
 getFilePath (fp, _, _) = fp

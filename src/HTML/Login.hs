@@ -10,6 +10,8 @@ import qualified Data.ByteString as B
 
 import HTML.Base
 import HTML.Frames
+import Bindrop.State
+import Bindrop.State.UploadDB
 import Bindrop.State.Users
 import Happstack.Server.ClientSession
 
@@ -106,7 +108,9 @@ myAcct u = baseHtml $ do
         (Just u) -> do
           let userName  = u ^. uName
           let userEmail = u ^. uEmail
+          let uploadCount = u ^. count
           H.p (H.toHtml $ "Username: " ++ userName)
           H.p (H.toHtml $ "E-mail:   " ++ userEmail)
+          H.p (H.toHtml $ "Number of uploads: " ++ show uploadCount)
         Nothing -> H.p "You are not logged in"
 

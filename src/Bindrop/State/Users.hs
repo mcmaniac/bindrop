@@ -22,6 +22,7 @@ data User = User { _userID :: UserID
                  , _uName  :: String --user name
                  , _uEmail :: String --user email
                  , _uPass  :: B.ByteString --user password
+                 , _count  :: Int --upload count for stats
                  } deriving (Eq, Ord, Show, Data, Typeable)
 
 $(makeLenses ''User)
@@ -33,6 +34,7 @@ inferIxSet "UserDB" ''User 'noCalcs
   , ''String
   , ''String
   , ''B.ByteString
+  , ''Int
   ]
 
 data Users =

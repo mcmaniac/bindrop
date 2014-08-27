@@ -25,12 +25,13 @@ upload u f = baseHtml $ do
             let fileName = file ^. fname
             let fileTime = file ^. uploadTime
             let privacy  = file ^. public
-            let infoLink = "localhost:8082/f/"    ++ file ^. sfname
+            let infoLink = "localhost:8082/f/" ++ file ^. sfname
 
             H.body $ do
               H.header $ mainHeader
               mainMenu u
               H.div ! A.id "file-info" $ do
+                H.h2 "Upload successful"
                 H.p (H.toHtml $ "uploaded name: "     ++ fileName)
                 H.p (H.toHtml $ "time of upload: "    ++
                   formatTime defaultTimeLocale "%H:%M - %a %Y.%m.%d" fileTime)
