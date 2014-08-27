@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveDataTypeable, TemplateHaskell, RecordWildCards #-}
+{-# LANGUAGE DeriveDataTypeable, TemplateHaskell #-}
 
 module UserUtils where
 
@@ -57,14 +57,15 @@ uRegisterPart acid =
          mUser <- query' acid (UserByID uID)
 
          case mUser of
-           (Just u@(User{..})) -> msum
-             [ do method POST
-                  let updatedUser = u & uName  .~ userName
-                                      & uEmail .~ userEmail
-                                      & uPass  .~ (getEncryptedPass userPass)
-                  _ <- update' acid (UpdateUser updatedUser)
-                  ok $ toResponse $ registrationSuccess updatedUser
-             ]
+           (Just mUser) -> do
+             method POST
+             let updatedUser = mUser & uName  .~ userName
+                                     & uEmail .~ userEmail
+                                     & uPass  .~ (getEncryptedPass userPass)
+                                     & count  .~ 0
+             _ <- update' acid (UpdateUser updatedUser)
+             ok $ toResponse $ registrationSuccess updatedUser
+
            _ -> ok $ toResponse $ registrationFail
 
        False -> ok $ toResponse $ registrationFail
