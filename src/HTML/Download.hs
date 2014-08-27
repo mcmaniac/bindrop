@@ -9,10 +9,10 @@ import Text.Blaze.Html
 import Text.Blaze.Html5 as H
 import Text.Blaze.Html5.Attributes as A
 
-import HTML.Base
-import HTML.Frames
 import Bindrop.State.UploadDB
 import Bindrop.State.Users
+import HTML.Base
+import HTML.Frames
 
 viewDownload :: Maybe User -> FileUpload -> Html
 viewDownload u file = baseHtml $ do

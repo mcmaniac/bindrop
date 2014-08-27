@@ -8,9 +8,9 @@ import Text.Blaze.Html5 as H
 import Text.Blaze.Html5.Attributes as A
 import qualified Data.ByteString as B
 
+import Bindrop.State.Users
 import HTML.Base
 import HTML.Frames
-import Bindrop.State.Users
 
 register :: Maybe User -> Html
 register u = baseHtml $ do

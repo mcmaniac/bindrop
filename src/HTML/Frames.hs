@@ -6,8 +6,8 @@ import Text.Blaze.Html
 import Text.Blaze.Html5 as H
 import Text.Blaze.Html5.Attributes as A
 
-import HTML.Base
 import Bindrop.State.Users
+import HTML.Base
 
 mainHeader :: Html
 mainHeader = do

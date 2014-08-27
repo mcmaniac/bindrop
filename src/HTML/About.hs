@@ -6,9 +6,9 @@ import Text.Blaze.Html
 import Text.Blaze.Html5 as H
 import Text.Blaze.Html5.Attributes as A
 
+import Bindrop.State.Users
 import HTML.Base
 import HTML.Frames
-import Bindrop.State.Users
 
 about :: Maybe User -> Html
 about u = baseHtml $ do

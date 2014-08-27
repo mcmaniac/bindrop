@@ -3,7 +3,6 @@
 module HTML.File where
 
 import Control.Lens.Operators
-import Control.Lens.Iso ( non )
 import Data.Time.Format
 import System.Locale
 import Text.Blaze.Html

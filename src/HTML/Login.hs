@@ -3,17 +3,17 @@
 module HTML.Login where
 
 import Control.Lens.Operators
+import Happstack.Server.ClientSession
 import Text.Blaze.Html
 import Text.Blaze.Html5 as H
 import Text.Blaze.Html5.Attributes as A
 import qualified Data.ByteString as B
 
-import HTML.Base
-import HTML.Frames
 import Bindrop.State
 import Bindrop.State.UploadDB
 import Bindrop.State.Users
-import Happstack.Server.ClientSession
+import HTML.Base
+import HTML.Frames
 
 loginPage :: Maybe User -> Html
 loginPage u = baseHtml $ do
