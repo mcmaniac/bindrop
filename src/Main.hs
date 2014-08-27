@@ -87,10 +87,10 @@ mainRoute acid = do
 
           , do -- the "/" index page
             nullDir
-            indexMostRecent acid
+            indexMostRecent acid mU
 
           , do -- to view download info
-            dir "f" $ path $ \fileName -> fpart mU acid fileName
+            dir "f" $ path $ \fileName -> fpart acid mU fileName
 
           , do -- to download:
             dir "s" $ path $ \fileName -> spart acid fileName
@@ -132,27 +132,24 @@ mainRoute acid = do
 myPolicy :: BodyPolicy
 myPolicy = (defaultBodyPolicy "/tmp/" (10*10^(6 :: Int)) 1000 1000)
 
-indexMostRecent :: AcidState BindropState ->
-  ClientSessionT SessionData (ServerPartT IO) Response
-indexMostRecent acid = do
+indexMostRecent
+  :: AcidState BindropState
+  -> Maybe User
+  -> ClientSessionT SessionData (ServerPartT IO) Response
+indexMostRecent acid u = do
   now <- liftIO $ getCurrentTime
   mostRecent <- query' acid (MostRecentUploads now)
-  --get user info
-  s <- getSession
-  let mU = s ^. sessionUser
   ok $ toResponse $ baseHtml $ do
-    index mU $ mapM_ recentUpload mostRecent
+    index u $ mapM_ recentUpload mostRecent
 
 indexPart :: Maybe User -> AcidState BindropState ->
   ClientSessionT SessionData (ServerPartT IO) Response
 indexPart mU acid =
   do method [GET, POST]
      u <- lookFile "fileUpload"
-
      let uName = getFileName u
-
      case uName of
-       "" -> indexMostRecent acid  --no file was selected on the form
+       "" -> indexMostRecent acid mU  --no file was selected on the form
        _  -> handleFile mU acid u
 
 handleFile
@@ -195,7 +192,8 @@ handleFile mU acid u = do
 
     _ -> mzero -- FIXME
 
-updateUserCount :: AcidState BindropState
+updateUserCount
+  :: AcidState BindropState
   -> FileUpload
   -> Maybe User
   -> ClientSessionT SessionData (ServerPartT IO) Response
@@ -226,9 +224,12 @@ getFileName (_, name, _) = name
 --getFileContents :: (FilePath, FilePath, ContentType) -> FilePath
 --getFileContents (_, _, contents) =
 
-fpart :: Maybe User -> AcidState BindropState -> String ->
-  ClientSessionT SessionData (ServerPartT IO) Response
-fpart u acid s = do
+fpart
+  :: AcidState BindropState
+  -> Maybe User
+  -> String
+  -> ClientSessionT SessionData (ServerPartT IO) Response
+fpart acid u s = do
   file <- query' acid (FileBySName s)
   case file of
     (Just file) -> do
@@ -236,8 +237,10 @@ fpart u acid s = do
     _ -> mzero
 
 --serve the file response to dir "s"
-spart :: AcidState BindropState -> String ->
-  ClientSessionT SessionData (ServerPartT IO) Response
+spart
+  :: AcidState BindropState
+  -> String
+  -> ClientSessionT SessionData (ServerPartT IO) Response
 spart acid s = do
   dlfile <- query' acid (FileBySName s)
   case dlfile of
@@ -262,7 +265,8 @@ spart acid s = do
 
     _ -> mzero --FIXME
 
-makePrivatePart :: AcidState BindropState
+makePrivatePart
+  :: AcidState BindropState
   -> String
   -> ClientSessionT SessionData (ServerPartT IO) Response
 makePrivatePart acid fName = do
