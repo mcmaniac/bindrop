@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveDataTypeable, TemplateHaskell #-}
 
-module UserUtils where
+module Bindrop.Responses.UserResponses where
 
 import Control.Monad
 import Control.Monad.IO.Class
@@ -10,27 +10,24 @@ import Crypto.Scrypt
 
 import Data.Acid
 import Data.Acid.Advanced ( query', update' )
-
-import Happstack.Server
-import Happstack.Server.SimpleHTTPS
-import Happstack.Server.Compression
-import Happstack.Server.ClientSession
-
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Char8 as C
 
+import Happstack.Server
+import Happstack.Server.ClientSession
+
+import Bindrop.Session
 import Bindrop.State
 import Bindrop.State.UploadDB
 import Bindrop.State.Users
-import Session
+
 import HTML.Index
 import HTML.File
 import HTML.Login
 import HTML.Register
 import HTML.Upload
 
-mkEncrypted :: B.ByteString -> IO EncryptedPass
-mkEncrypted pw = encryptPassIO defaultParams (Pass pw)
+import Utils.UserUtils
 
 uRegisterPart :: AcidState BindropState ->
   ClientSessionT SessionData (ServerPartT IO) Response
@@ -94,12 +91,6 @@ loginPart acid =
 
        _ -> ok $ toResponse $ login Nothing
 
-isUniqueUser :: Maybe User -> Bool
-isUniqueUser user =
-  case user of
-    (Just user) -> False
-    Nothing     -> True
-
 logoutPart :: Maybe User -> ClientSessionT SessionData (ServerPartT IO) Response
 logoutPart u = do
   expireSession
@@ -122,9 +113,26 @@ myUploadsPart acid u = do
 
     Nothing -> mzero
 
-extractUser :: Maybe User -> User
-extractUser u =
+updateUserCount
+  :: AcidState BindropState
+  -> FileUpload
+  -> Maybe User
+  -> ClientSessionT SessionData (ServerPartT IO) Response
+updateUserCount acid f u = do
+  let mU = u
   case u of
-    (Just u) -> u
-    Nothing  -> User 0 "" "" (C.pack "") 0
+    (Just u) -> do
+      method POST
+      let updatedUser = u & userID .~ u ^. userID
+                          & uName  .~ u ^. uName
+                          & uEmail .~ u ^. uEmail
+                          & uPass  .~ u ^. uPass
+                          & count  %~ succ
+      _ <- update' acid (UpdateUser updatedUser)
+
+      -- update cookie
+      putSession $ SessionData $ Just updatedUser
+
+      ok $ toResponse $ upload mU f
+    _ -> mzero --FIXME
 

@@ -1,10 +1,10 @@
 {-# LANGUAGE DeriveDataTypeable, TemplateHaskell #-}
 
-module Session where
+module Bindrop.Session where
 
 import Control.Lens.TH ( makeLenses )
-import Data.Data ( Data, Typeable )
-import Data.SafeCopy ( base, deriveSafeCopy )
+import Data.Data       ( Data, Typeable )
+import Data.SafeCopy   ( base, deriveSafeCopy )
 import Happstack.Server.ClientSession
 
 import Bindrop.State.Users

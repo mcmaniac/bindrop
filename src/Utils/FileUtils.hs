@@ -1,10 +1,10 @@
-module FileUtils where
+module Utils.FileUtils where
 
 import Control.Lens
-import System.FilePath.Lens
-import System.Directory
-
 import Control.Applicative
+import Happstack.Server ( ContentType )
+import System.Directory
+import System.FilePath.Lens
 import System.Random
 
 randomStringIO :: Int -> IO String
@@ -27,4 +27,10 @@ moveToRandomFile dir len file = do
                       & filename .~ randomString len gen
   renameFile file new_file
   return new_file
+
+getFilePath :: (FilePath, FilePath, ContentType) -> FilePath
+getFilePath (fp, _, _) = fp
+
+getFileName :: (FilePath, FilePath, ContentType) -> FilePath
+getFileName (_, name, _) = name
 
