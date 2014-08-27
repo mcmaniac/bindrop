@@ -44,7 +44,7 @@ uploadedFile mU file = toHtml $ do
   let uploader = unUserName $ file ^. userName
   let userName = mU ^. uName
   let privacyStatus = file ^. public
-  let privacyDir = "/mp/" ++ file ^. sfname
+  let privacyDir = "/u/m/privacy/" ++ file ^. sfname
 
   H.div ! A.id "uploadInfo" $ do
     H.div ! A.id "dl-counter-user" $ do
@@ -98,7 +98,7 @@ makePrivate f u = baseHtml $ do
       if not privacyStatus
         then do
           H.p $ do "You can only view this file on your "
-                   a ! href ("/mu") $ "My Uploads"
+                   a ! href ("/u/m/uploads") $ "My Uploads"
                    " page"
         else do
           H.p $ do "This file now appears on the "
