@@ -21,7 +21,7 @@ executable bindrop
   -- other-extensions:    
   build-depends:       base >=4.6 && <4.8,
                        transformers, directory, mtl,
-                       blaze-html, bytestring,  
+                       blaze-html, bytestring, 
                        happstack-server, happstack-clientsession,
                        happstack-server-tls, old-locale,
                        random, acid-state, ixset, safecopy,
