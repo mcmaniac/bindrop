@@ -26,7 +26,7 @@ loginPage u = baseHtml $ do
       Nothing -> do
         H.div ! A.id "login-page" $ do
           H.h2 "Login"
-          H.form ! action "pl"
+          H.form ! action "u/login"
                  ! A.method "post" $ do
                    H.label "Username: " >> input ! A.type_ "text"
                                                  ! A.name "username"
@@ -39,7 +39,7 @@ loginPage u = baseHtml $ do
                          ! value "Login"
 
           H.p $ do "Don't have an account yet? "
-                   a ! href ("/r") $ "Register"
+                   a ! href ("/u/r") $ "Register"
                    " here."
       (Just u) -> do
         let userName = u ^. uName

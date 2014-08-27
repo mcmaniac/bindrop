@@ -23,7 +23,7 @@ register u = baseHtml $ do
       Nothing -> do
         H.div ! A.id "register-form" $ do
           H.h2 "Register a new user"
-          H.form ! action "pr"
+          H.form ! action "r/process"
                  ! A.method "post" $ do
                    H.label "Username: " >> input ! A.type_ "text"
                                                  ! A.name "username"

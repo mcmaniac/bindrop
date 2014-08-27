@@ -23,9 +23,9 @@ mainMenu u = do
       case u of
         (Just u) -> do
           H.li $ H.a ! A.href "/"   $ "Home"
-          H.li $ H.a ! A.href "/m"  $ "My account"
-          H.li $ H.a ! A.href "/mu" $ "My uploads"
-          H.li $ H.a ! A.href "/l"  $ "Logout"
+          H.li $ H.a ! A.href "/u/m"  $ "My account"
+          H.li $ H.a ! A.href "/u/m/uploads" $ "My uploads"
+          H.li $ H.a ! A.href "u/logout"  $ "Logout"
           H.li $ H.a ! A.href "/a"  $ "About"
 
         Nothing -> do

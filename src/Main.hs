@@ -95,29 +95,29 @@ mainRoute acid = do
           , do -- to download:
             dir "s" $ path $ \fileName -> spart acid fileName
 
-          , do -- user login page
-            dir "u" $ ok $ toResponse $ loginPage mU
-
-          , do -- process login
-            dir "pl" $ loginPart acid
-
-          , do -- user registration page
-            dir "r" $ ok $ toResponse $ register mU
+          , do -- login
+            dirs "u/login" $ loginPart acid
 
           , do -- logout
-            dir "l" $ logoutPart mU
-
-          , do -- my account page
-            dir "m" $ myAcctPart mU
-
-          , do -- user specific uploads
-            dir "mu" $ myUploadsPart acid mU
-
-          , do -- make a file private via button
-            dir "mp" $ path $ \fileName -> makePrivatePart acid fileName --lmao private part
+            dirs "u/logout" $ logoutPart mU
 
           , do -- process registration
-            dir "pr" $ uRegisterPart acid
+            dirs "u/r/process" $ uRegisterPart acid
+
+          , do -- user registration page
+            dirs "u/r" $ ok $ toResponse $ register mU
+
+          , do -- user specific uploads
+            dirs "u/m/uploads" $ myUploadsPart acid mU
+
+          , do -- make a file private via button
+            dirs "u/m/privacy" $ path $ \fileName -> makePrivatePart acid fileName --lmao private part
+
+          , do -- my account page
+            dirs "u/m" $ myAcctPart mU
+
+          , do -- user login page
+            dir "u" $ ok $ toResponse $ loginPage mU
 
           , do -- about page
             dir "a" $ ok $ toResponse $ about mU
