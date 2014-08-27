@@ -26,7 +26,6 @@ loginPage u = baseHtml $ do
       Nothing -> do
         H.div ! A.id "login-page" $ do
           H.h2 "Login"
-          H.br
           H.form ! action "pl"
                  ! A.method "post" $ do
                    H.label "Username: " >> input ! A.type_ "text"
@@ -47,10 +46,10 @@ loginPage u = baseHtml $ do
         H.div ! A.id "user-info" $ do
           H.p (H.toHtml $ "You are already logged in as " ++ userName)
 
-loginSuccessful :: Maybe User -> Html
-loginSuccessful u = baseHtml $ do
+login :: Maybe User -> Html
+login u = baseHtml $ do
   H.head $ do
-    H.title "login successful!"
+    H.title "login"
   H.body $ do
     H.header $ mainHeader
     mainMenu u
@@ -59,35 +58,15 @@ loginSuccessful u = baseHtml $ do
         let userName = u ^. uName
         H.div ! A.id "user-info" $ do
           H.h2 "Login"
-          H.br
           H.p "Login successful!"
           H.p (toHtml $ "Welcome back " ++ userName ++ "!")
           H.p $ do "Click "
                    a ! href ("/") $ "here"
                    " to return to the home page"
-      Nothing -> H.p "Login failed"
+      Nothing -> H.p "Login failed. Invalid username or password"
 
-loginFailed :: Maybe User ->  Html
-loginFailed u = baseHtml $ do
-  H.head $ do
-    H.title "login failed"
-  H.body $ do
-    H.header $ mainHeader
-    mainMenu u
-    H.div ! A.id "user-info" $ do
-      case u of
-        Nothing -> do
-          H.h2 "Login failed"
-          H.br
-          H.p "Login failed. Invalid username or password "
-          H.br
-          H.p $ do "Click "
-                   a ! href ("/") $ "here"
-                   " to return to the home page"
-        (Just u) -> H.p "You are already logged in"
-
-logout :: Html
-logout = baseHtml $ do
+logout :: Maybe User -> Html
+logout u = baseHtml $ do
   H.head $ do
     H.title "logout"
   H.body $ do
@@ -95,11 +74,13 @@ logout = baseHtml $ do
     mainMenu Nothing
     H.div ! A.id "user-info" $ do
       H.h2 "Log out"
-      H.br
-      H.p "You have logged out"
-      H.p $ do "Click "
-               a ! href ("/") $ "here"
-               " to return to the home page"
+      case u of
+        (Just u) -> do
+          H.p "You have logged out"
+          H.p $ do "Click "
+                   a ! href ("/") $ "here"
+                   " to return to the home page"
+        Nothing -> H.p "You were never logged in."
 
 myAcct :: Maybe User -> Html
 myAcct u = baseHtml $ do
@@ -110,14 +91,13 @@ myAcct u = baseHtml $ do
     mainMenu u
     H.div ! A.id "user-info" $ do
       H.h2 "Account details"
-      H.br
       case u of
         (Just u) -> do
           let userName  = u ^. uName
           let userEmail = u ^. uEmail
           let uploadCount = u ^. count
-          H.p (H.toHtml $ "Username: " ++ userName)
-          H.p (H.toHtml $ "E-mail:   " ++ userEmail)
-          H.p (H.toHtml $ "Number of uploads: " ++ show uploadCount)
+          H.p (H.toHtml $ userName)
+          H.p (H.toHtml $ userEmail)
+          H.p (H.toHtml $ show uploadCount ++ " uploads")
         Nothing -> H.p "You are not logged in"
 

@@ -87,12 +87,12 @@ loginPart acid =
          let match    = verifyPass' userPass $ EncryptedPass (mUser ^. uPass)
 
          if match
-           then ok $ toResponse $ loginSuccessful (Just mUser)
+           then ok $ toResponse $ login (Just mUser)
            else do
              putSession $ SessionData Nothing
-             ok $ toResponse $ loginFailed Nothing
+             ok $ toResponse $ login Nothing
 
-       _ -> ok $ toResponse $ loginFailed Nothing
+       _ -> ok $ toResponse $ login Nothing
 
 isUniqueUser :: Maybe User -> Bool
 isUniqueUser user =
@@ -100,10 +100,10 @@ isUniqueUser user =
     (Just user) -> False
     Nothing     -> True
 
-logoutPart :: ClientSessionT SessionData (ServerPartT IO) Response
-logoutPart = do
+logoutPart :: Maybe User -> ClientSessionT SessionData (ServerPartT IO) Response
+logoutPart u = do
   expireSession
-  ok $ toResponse $ logout
+  ok $ toResponse $ logout u
 
 myAcctPart :: Maybe User -> ClientSessionT SessionData (ServerPartT IO) Response
 myAcctPart u = do

@@ -105,7 +105,7 @@ mainRoute acid = do
             dir "r" $ ok $ toResponse $ register mU
 
           , do -- logout
-            dir "l" $ logoutPart
+            dir "l" $ logoutPart mU
 
           , do -- my account page
             dir "m" $ myAcctPart mU

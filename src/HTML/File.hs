@@ -92,7 +92,6 @@ makePrivate f u = baseHtml $ do
 
     H.div ! A.id "user-info" $ do
       H.h2 "Privacy change"
-      H.br
       H.p (H.toHtml $ fileName)
       H.p (H.toHtml $ "Public :: " ++ show privacyStatus)
 

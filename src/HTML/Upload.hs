@@ -32,9 +32,9 @@ upload u f = baseHtml $ do
               mainMenu u
               H.div ! A.id "file-info" $ do
                 H.h2 "Upload successful"
-                H.p (H.toHtml $ "File name: "     ++ fileName)
-                H.p (H.toHtml $ "Time of upload: "    ++
-                  formatTime defaultTimeLocale "%H:%M - %a %Y.%m.%d" fileTime)
+                H.p (H.toHtml $ fileName)
+                H.p (H.toHtml $ formatTime defaultTimeLocale
+                  "%H:%M - %a %Y.%m.%d" fileTime)
                 H.p (H.toHtml $ "Link: " ++ infoLink)
 
 myUploads :: Maybe User -> Html -> Html
