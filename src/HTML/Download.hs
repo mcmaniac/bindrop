@@ -19,20 +19,22 @@ viewDownload u file = baseHtml $ do
   H.head $ do
     H.title "Download"
 
-  let filename = file ^. fname
-  let filepath = file ^. fpath
+  let filename  = file ^. fname
+  let filepath  = file ^. fpath
   let sfilename = file ^. sfname
-  let fileTime = file ^. uploadTime
-  let dlLink   = "/s/" ++ file ^. sfname
+  let fileTime  = file ^. uploadTime
+  let count     = file ^. dlCount
+  let dlLink    = "/s/" ++ file ^. sfname
 
   H.body $ do
     H.header $ mainHeader
     mainMenu u
     H.div ! A.id "file-info" $ do
       H.h2 "Download"
-      H.p (H.toHtml $ "Original file name: " ++ filename)
+      H.p (H.toHtml $ "File name: " ++ filename)
       H.p (H.toHtml $ "Uploaded at: "        ++
         formatTime defaultTimeLocale "%H:%M - %a %Y.%m.%d" fileTime)
+      H.p (H.toHtml $ "Downloaded " ++ show count ++ " times")
       H.p $ do "Click "
                a ! href (toValue dlLink) $ "here"
                " to download the file."

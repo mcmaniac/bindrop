@@ -22,13 +22,14 @@ newtype UserName = UserName {unUserName :: String}
 $(deriveSafeCopy 0 'base ''FileID)
 $(deriveSafeCopy 0 'base ''UserName)
 
-data FileUpload = FileUpload { _fileID :: FileID
-                             , _fpath :: FilePath --path on server disk
-                             , _fname :: String  --original uploaded name
-                             , _sfname :: String --random name on server disk
+data FileUpload = FileUpload { _fileID     :: FileID
+                             , _fpath      :: FilePath --path on server disk
+                             , _fname      :: String   --original uploaded name
+                             , _sfname     :: String   --random name on server disk
                              , _uploadTime :: UTCTime
-                             , _public :: Bool --privacy setting
-                             , _userName :: UserName
+                             , _public     :: Bool     --privacy setting
+                             , _userName   :: UserName --uploader name
+                             , _dlCount    :: Int      --download count
                              } deriving (Eq, Ord, Show, Data, Typeable)
 
 $(makeLenses ''FileUpload)
@@ -43,6 +44,7 @@ inferIxSet "FileDB" ''FileUpload 'noCalcs
   , ''UTCTime
   , ''Bool
   , ''UserName
+  , ''Int
   ]
 
 data UploadDB =

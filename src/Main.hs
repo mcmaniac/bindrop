@@ -244,10 +244,22 @@ spart acid s = do
     (Just dlfile) -> do
       let filepath = dlfile ^. fpath
       let trueName = dlfile ^. fname
+
+      --update file download count
+      let updatedFile = dlfile & fileID      .~ dlfile ^. fileID
+                               & fname       .~ dlfile ^. fname
+                               & sfname      .~ dlfile ^. sfname
+                               & uploadTime  .~ dlfile ^. uploadTime
+                               & public      .~ dlfile ^. public
+                               & userName    .~ dlfile ^. userName
+                               & dlCount     %~ succ
+      _ <- update' acid (UpdateUpload updatedFile)
+
       response <- serveFile (guessContentTypeM mimeTypes) filepath
       return $ setHeader "Content-Disposition"
         ("attachment; filename=\"" ++ trueName ++ "\"")
         response
+
     _ -> mzero --FIXME
 
 makePrivatePart :: AcidState BindropState

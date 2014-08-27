@@ -40,7 +40,7 @@ initialBindropState = BindropState (initialUploadDBState) (initialUsersState)
 newUpload :: UTCTime -> Update BindropState FileUpload
 newUpload t = do f <- get
                  let file = FileUpload (f ^. fileDB . nextFileID) "" "" "" t True
-                            (UserName "")
+                            (UserName "") 0
                  put $ f & fileDB . nextFileID %~ succ
                          & fileDB . files      %~ IxSet.insert file
                  return file
