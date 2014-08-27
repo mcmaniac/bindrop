@@ -47,16 +47,15 @@ uploadedFile mU file = toHtml $ do
   let privacyDir = "/mp/" ++ file ^. sfname
 
   H.div ! A.id "uploadInfo" $ do
-    H.ul $ do
-      H.div ! A.id "dl-counter-user" $ do
-        if(counter /= 1)
-          then H.p (H.toHtml $ show counter ++ " downloads")
-          else H.p (H.toHtml $ show counter ++ " download")
+    H.div ! A.id "dl-counter-user" $ do
+      if(counter /= 1)
+        then H.p (H.toHtml $ show counter ++ " downloads")
+        else H.p (H.toHtml $ show counter ++ " download")
 
-      H.li $ a ! href (toValue dlLink) $ H.toHtml fileName
-      H.li (H.toHtml $ formatTime defaultTimeLocale "%H:%M - %a %Y.%m.%d" fileTime)
-      H.li (H.toHtml $ infoLink)
-      H.li (H.toHtml $ "Public :: " ++ show privacyStatus)
+    H.p $ a ! href (toValue dlLink) $ H.toHtml fileName
+    H.p (H.toHtml $ formatTime defaultTimeLocale "%H:%M - %a %Y.%m.%d" fileTime)
+    H.p (H.toHtml $ infoLink)
+    H.p (H.toHtml $ "Public :: " ++ show privacyStatus)
 
     if (userName == uploader)
       then do
@@ -93,8 +92,9 @@ makePrivate f u = baseHtml $ do
 
     H.div ! A.id "user-info" $ do
       H.h2 "Privacy change"
-      H.p (H.toHtml $ "Your file: " ++ fileName)
-      H.p (H.toHtml $ " Now has the public status: " ++ show privacyStatus)
+      H.br
+      H.p (H.toHtml $ fileName)
+      H.p (H.toHtml $ "Public :: " ++ show privacyStatus)
 
       if not privacyStatus
         then do
@@ -105,7 +105,7 @@ makePrivate f u = baseHtml $ do
           H.p $ do "This file now appears on the "
                    a ! href ("/") $ "Recent Uploads"
                    " list"
-
+      H.br
       H.p $ do "Click "
                a ! href ("/") $ "here"
                " to return to the home page"

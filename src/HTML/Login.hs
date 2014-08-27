@@ -26,6 +26,7 @@ loginPage u = baseHtml $ do
       Nothing -> do
         H.div ! A.id "login-page" $ do
           H.h2 "Login"
+          H.br
           H.form ! action "pl"
                  ! A.method "post" $ do
                    H.label "Username: " >> input ! A.type_ "text"
@@ -58,6 +59,7 @@ loginSuccessful u = baseHtml $ do
         let userName = u ^. uName
         H.div ! A.id "user-info" $ do
           H.h2 "Login"
+          H.br
           H.p "Login successful!"
           H.p (toHtml $ "Welcome back " ++ userName ++ "!")
           H.p $ do "Click "
@@ -75,7 +77,10 @@ loginFailed u = baseHtml $ do
     H.div ! A.id "user-info" $ do
       case u of
         Nothing -> do
-          H.p "Login failed :@ "
+          H.h2 "Login failed"
+          H.br
+          H.p "Login failed. Invalid username or password "
+          H.br
           H.p $ do "Click "
                    a ! href ("/") $ "here"
                    " to return to the home page"
@@ -90,6 +95,7 @@ logout = baseHtml $ do
     mainMenu Nothing
     H.div ! A.id "user-info" $ do
       H.h2 "Log out"
+      H.br
       H.p "You have logged out"
       H.p $ do "Click "
                a ! href ("/") $ "here"
@@ -103,7 +109,8 @@ myAcct u = baseHtml $ do
     H.header $ mainHeader
     mainMenu u
     H.div ! A.id "user-info" $ do
-      H.h2 "Your account details"
+      H.h2 "Account details"
+      H.br
       case u of
         (Just u) -> do
           let userName  = u ^. uName

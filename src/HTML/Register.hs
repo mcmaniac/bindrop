@@ -23,6 +23,7 @@ register u = baseHtml $ do
       Nothing -> do
         H.div ! A.id "register-form" $ do
           H.h2 "Register a new user"
+          H.br
           H.form ! action "pr"
                  ! A.method "post" $ do
                    H.label "Username: " >> input ! A.type_ "text"
@@ -53,9 +54,14 @@ registrationSuccess u = baseHtml $ do
     H.header $ mainHeader
     mainMenu Nothing
     H.div ! A.id "user-info" $ do
+      H.h2 "Registration successful!"
+      H.br
       H.p (H.toHtml $ "Your username: "   ++ username)
       H.p (H.toHtml $ "Your e-mail: "     ++ userEmail)
-      H.p (H.toHtml $ "Your password (hehe): " ++ show userPass)  -- obviously temporary
+      H.br
+      H.p $ do "Click "
+               a ! href ("/") $ "here"
+               " to return to the home page"
 
 registrationFail :: Html
 registrationFail = baseHtml $ do
@@ -65,5 +71,10 @@ registrationFail = baseHtml $ do
     H.header $ mainHeader
     mainMenu Nothing
     H.div ! A.id "user-info" $ do
-      H.p "Registration failed :( "
-
+      H.h2 "Registration failed"
+      H.br
+      H.p "Registration failed. Username and e-mail must be unique. "
+      H.br
+      H.p $ do "Click "
+               a ! href ("/") $ "here"
+               " to return to the home page"

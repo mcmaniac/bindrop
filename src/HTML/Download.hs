@@ -31,10 +31,12 @@ viewDownload u file = baseHtml $ do
     mainMenu u
     H.div ! A.id "file-info" $ do
       H.h2 "Download"
+      H.br
       H.p (H.toHtml $ "File name: " ++ filename)
-      H.p (H.toHtml $ "Uploaded at: "        ++
+      H.p (H.toHtml $ "Uploaded at "        ++
         formatTime defaultTimeLocale "%H:%M - %a %Y.%m.%d" fileTime)
       H.p (H.toHtml $ "Downloaded " ++ show count ++ " times")
+      H.br
       H.p $ do "Click "
                a ! href (toValue dlLink) $ "here"
                " to download the file."
