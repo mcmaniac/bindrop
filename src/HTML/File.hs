@@ -19,6 +19,7 @@ recentUpload :: FileUpload -> Html
 recentUpload file = toHtml $ do
   let fileName = file ^. fname
   let fileTime = file ^. uploadTime
+  let counter  = file ^. dlCount
   let dlLink   = "/s/" ++ file ^. sfname
   let infoLink = "localhost:8082/f/" ++ file ^. sfname
 
@@ -27,11 +28,17 @@ recentUpload file = toHtml $ do
       a ! href (toValue dlLink) $ H.toHtml fileName
     H.p (H.toHtml $ formatTime defaultTimeLocale "%H:%M - %a %Y.%m.%d" fileTime)
     H.p (H.toHtml $ infoLink)
+    H.div ! A.id "dl-counter-recent" $ do
+      if(counter /= 1)
+        then H.p (H.toHtml $ show counter ++ " downloads")
+        else H.p (H.toHtml $ show counter ++ " download")
+
 
 uploadedFile :: User -> FileUpload -> Html
 uploadedFile mU file = toHtml $ do
   let fileName = file ^. fname
   let fileTime = file ^. uploadTime
+  let counter  = file ^. dlCount
   let dlLink   = "/s/" ++ file ^. sfname
   let infoLink = "localhost:8082/f/" ++ file ^. sfname
   let uploader = unUserName $ file ^. userName
@@ -41,6 +48,11 @@ uploadedFile mU file = toHtml $ do
 
   H.div ! A.id "uploadInfo" $ do
     H.ul $ do
+      H.div ! A.id "dl-counter-user" $ do
+        if(counter /= 1)
+          then H.p (H.toHtml $ show counter ++ " downloads")
+          else H.p (H.toHtml $ show counter ++ " download")
+
       H.li $ a ! href (toValue dlLink) $ H.toHtml fileName
       H.li (H.toHtml $ formatTime defaultTimeLocale "%H:%M - %a %Y.%m.%d" fileTime)
       H.li (H.toHtml $ infoLink)

@@ -137,6 +137,23 @@ header {
   margin-left: 533px;
 }
 
+#dl-counter-recent {
+  display: inline-block;
+  position: relative;
+  top: -35px;
+  float: right;
+}
+
+#dl-counter-user {
+  display: inline-block;
+  position: relative;
+  float: right;
+  float: top;
+  top: 30px;
+  left: 340px;
+  margin-top: -30px;
+}
+
 #privacyButton {
   display: inline-block;
   position: relative;
