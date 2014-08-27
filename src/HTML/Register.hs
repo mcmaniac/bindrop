@@ -57,9 +57,10 @@ registrationSuccess u = baseHtml $ do
       H.p (H.toHtml $ "Your username: "   ++ username)
       H.p (H.toHtml $ "Your e-mail: "     ++ userEmail)
       H.br
-      H.p $ do "Click "
-               a ! href ("/") $ "here"
-               " to return to the home page"
+      H.p $ do
+        "Click "
+        a ! href ("/") $ "here"
+        " to return to the home page"
 
 registrationFail :: Html
 registrationFail = baseHtml $ do
@@ -71,6 +72,8 @@ registrationFail = baseHtml $ do
     H.div ! A.id "user-info" $ do
       H.h2 "Registration failed"
       H.p "Registration failed. Username and e-mail must be unique. "
-      H.p $ do "Click "
-               a ! href ("/") $ "here"
-               " to return to the home page"
+      H.p $ do
+        "Click "
+        a ! href ("/") $ "here"
+        " to return to the home page"
+

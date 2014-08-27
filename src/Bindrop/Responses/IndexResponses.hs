@@ -35,11 +35,11 @@ indexMostRecent acid u = do
 
 indexPart :: Maybe User -> AcidState BindropState ->
   ClientSessionT SessionData (ServerPartT IO) Response
-indexPart mU acid =
-  do method [GET, POST]
-     u <- lookFile "fileUpload"
-     let uName = getFileName u
-     case uName of
-       "" -> indexMostRecent acid mU  --no file was selected on the form
-       _  -> handleFile mU acid u
+indexPart mU acid = do
+  method [GET, POST]
+  u <- lookFile "fileUpload"
+  let uName = getFileName u
+  case uName of
+    "" -> indexMostRecent acid mU  --no file was selected on the form
+    _  -> handleFile mU acid u
 

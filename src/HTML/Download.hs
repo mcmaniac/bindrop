@@ -37,7 +37,8 @@ viewDownload u file = baseHtml $ do
       if (count /= 1)
         then H.p (H.toHtml $ "Downloaded " ++ show count ++ " times")
         else H.p (H.toHtml $ "Downloaded " ++ show count ++ " time")
-      H.p $ do "Click "
-               a ! href (toValue dlLink) $ "here"
-               " to download the file."
+      H.p $ do
+        "Click "
+        a ! href (toValue dlLink) $ "here"
+        " to download the file."
 

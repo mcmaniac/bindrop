@@ -38,9 +38,10 @@ loginPage u = baseHtml $ do
                          ! name "login"
                          ! value "Login"
 
-          H.p $ do "Don't have an account yet? "
-                   a ! href ("/u/r") $ "Register"
-                   " here."
+          H.p $ do
+            "Don't have an account yet? "
+            a ! href ("/u/r") $ "Register"
+            " here."
       (Just u) -> do
         let userName = u ^. uName
         H.div ! A.id "user-info" $ do
@@ -60,9 +61,10 @@ login u = baseHtml $ do
           H.h2 "Login"
           H.p "Login successful!"
           H.p (toHtml $ "Welcome back " ++ userName ++ "!")
-          H.p $ do "Click "
-                   a ! href ("/") $ "here"
-                   " to return to the home page"
+          H.p $ do
+            "Click "
+            a ! href ("/") $ "here"
+            " to return to the home page"
       Nothing -> H.p "Login failed. Invalid username or password"
 
 logout :: Maybe User -> Html
@@ -77,9 +79,10 @@ logout u = baseHtml $ do
       case u of
         (Just u) -> do
           H.p "You have logged out"
-          H.p $ do "Click "
-                   a ! href ("/") $ "here"
-                   " to return to the home page"
+          H.p $ do
+            "Click "
+            a ! href ("/") $ "here"
+            " to return to the home page"
         Nothing -> H.p "You were never logged in."
 
 myAcct :: Maybe User -> Html

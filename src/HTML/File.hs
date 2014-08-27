@@ -100,11 +100,13 @@ makePrivate f u = baseHtml $ do
                    a ! href ("/u/m/uploads") $ "My Uploads"
                    " page"
         else do
-          H.p $ do "This file now appears on the "
-                   a ! href ("/") $ "Recent Uploads"
-                   " list"
+          H.p $ do
+            "This file now appears on the "
+            a ! href ("/") $ "Recent Uploads"
+            " list"
       H.br
-      H.p $ do "Click "
-               a ! href ("/") $ "here"
-               " to return to the home page"
+      H.p $ do
+        "Click "
+        a ! href ("/") $ "here"
+        " to return to the home page"
 
