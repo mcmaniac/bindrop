@@ -142,7 +142,10 @@ userByEmail email = do
   return $ getOne $ (db ^. userDB . users) @= email
 
 $(makeAcidic ''BindropState
-  [ 'newUpload
+  [ 'updateDCount
+  , 'updateUCount
+  , 'updateACount
+  , 'newUpload
   , 'updateUpload
   , 'fileByID
   , 'fileBySName
