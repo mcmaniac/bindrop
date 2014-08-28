@@ -1,6 +1,5 @@
 {-# LANGUAGE DeriveDataTypeable, GeneralizedNewtypeDeriving,
-  TemplateHaskell, TypeFamilies,
-  OverloadedStrings, RecordWildCards #-}
+  TemplateHaskell, TypeFamilies, OverloadedStrings #-}
 
 module Bindrop.State.UploadDB where
 
