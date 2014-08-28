@@ -21,8 +21,9 @@ import Bindrop.State.UploadDB
 import Bindrop.State.Users
 
 data BindropState =
-  BindropState { _fileDB :: UploadDB
-               , _userDB :: Users
+  BindropState { _fileDB  :: UploadDB
+               , _userDB  :: Users
+               , _journal :: Journal
                } deriving (Data, Typeable)
 
 $(makeLenses ''BindropState)
@@ -32,10 +33,28 @@ $(deriveSafeCopy 0 'base ''BindropState)
 inferIxSet "BindropDBs" ''BindropState 'noCalcs
   [ ''FileDB
   , ''UserDB
+  , ''Journal
   ]
 
 initialBindropState :: BindropState
-initialBindropState = BindropState (initialUploadDBState) (initialUsersState)
+initialBindropState = BindropState (initialUploadDBState)
+  (initialUsersState) (initialJournalState)
+
+--Journal
+updateDCount :: Update BindropState ()
+updateDCount = do
+  j <- get
+  put $ j & journal . dcount %~ succ
+
+updateUCount :: Update BindropState ()
+updateUCount = do
+  j <- get
+  put $ j & journal . ucount %~ succ
+
+updateACount :: Update BindropState ()
+updateACount = do
+  j <- get
+  put $ j & journal . acount %~ succ
 
 -- UploadDB
 -- create a new empty file upload and add it to the DB
