@@ -136,3 +136,37 @@ updateUserCount acid f u = do
       ok $ toResponse $ upload mU f
     _ -> mzero --FIXME
 
+changePassPart
+  :: AcidState BindropState
+  -> Maybe User
+  -> ClientSessionT SessionData (ServerPartT IO) Response
+changePassPart acid u = do
+  method POST
+  oldPass  <- look "oldPass"
+  newPass  <- look "newPass"
+  cNewPass <- look "cNewPass"
+
+  case u of
+    (Just u) -> do
+      let oldUserPass    = Pass $ C.pack oldPass
+      let newPassesMatch = newPass == cNewPass
+      let match = verifyPass' oldUserPass $ EncryptedPass (u ^. uPass)
+      newUserPass <- liftIO $ mkEncrypted $ C.pack newPass
+
+      if match && newPassesMatch
+        then do
+          let updatedUser = u & userID .~ u ^. userID
+                              & uName  .~ u ^. uName
+                              & uEmail .~ u ^. uEmail
+                              & uPass  .~ (getEncryptedPass newUserPass)
+                              & count  .~ u ^. count
+          _ <- update' acid (UpdateUser updatedUser)
+
+          -- update cookie
+          putSession $ SessionData $ Just updatedUser
+
+          ok $ toResponse $ changePassSuccess (Just updatedUser)
+        else ok $ toResponse $ changePassFail (Just u)
+
+    Nothing -> ok $ toResponse $ changePassFail Nothing
+

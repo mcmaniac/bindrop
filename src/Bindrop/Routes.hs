@@ -54,6 +54,9 @@ mainRoute acid = do
           , do -- user registration page
             dirs "u/r" $ ok $ toResponse $ register mU
 
+          , do -- password change
+            dirs "u/m/p" $ changePassPart acid mU
+
           , do -- user specific uploads
             dirs "u/m/uploads" $ myUploadsPart acid mU
 

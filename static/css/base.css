@@ -160,7 +160,8 @@ header {
 }
 
 #register-form,
-#login-page {
+#login-page,
+#pass-form {
   display:           inline;
   position:          absolute;
   margin:            0px 0px 0px 240px;
@@ -169,15 +170,26 @@ header {
   padding-right:     32px;
 }
 
+#pass-form {
+  top: 0px;
+  width: 300px;
+}
+
+#pass-form p {
+  font-weight: bold;
+}
+
 #register-form label,
-#login-page label {
+#login-page label,
+#pass-form label {
   display:     inline-block;
   width:       100px;
   padding-bottom: 15px;
 }
 
 #register-form label input,
-#login-page label input {
+#login-page label input,
+#pass-form label input {
   display: inline-block;
   padding-bottom: 15px;
 }

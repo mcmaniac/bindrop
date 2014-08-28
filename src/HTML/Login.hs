@@ -65,7 +65,10 @@ login u = baseHtml (Just "login") $ do
             "Click "
             a ! href ("/") $ "here"
             " to return to the home page"
-      Nothing -> H.p "Login failed. Invalid username or password"
+      Nothing -> do
+        H.div ! A.id "user-info" $ do
+          H.h2 "Login failed"
+          H.p "Login failed. Invalid username or password"
 
 logout :: Maybe User -> Html
 logout u = baseHtml (Just "logout") $ do
@@ -102,5 +105,51 @@ myAcct u = baseHtml (Just "my account") $ do
           H.p (H.toHtml $ userName)
           H.p (H.toHtml $ userEmail)
           H.p (H.toHtml $ show uploadCount ++ " uploads")
+          H.div ! A.id "pass-form" $ do
+            H.form ! action "/u/m/p"
+                   ! A.method "post" $ do
+              H.p "Change your password"
+              H.label "Old password: " >> input ! A.type_ "password"
+                                                ! A.name "oldPass"
+              H.br
+              H.label "New password: " >> input ! A.type_ "password"
+                                                ! A.name "newPass"
+              H.br
+              H.label "Confirm new password: " >> input ! A.type_ "password"
+                                                        ! A.name "cNewPass"
+
+              H.br
+
+              --submit button
+              input ! type_ "submit"
+                    ! name "changePass"
+                    ! value "Submit"
+
         Nothing -> H.p "You are not logged in"
+
+changePassSuccess :: Maybe User -> Html
+changePassSuccess u = baseHtml (Just "password change") $ do
+  H.head $ do
+    H.title "password change"
+  H.body $ do
+    H.header $ mainHeader
+    mainMenu u
+    H.div ! A.id "user-info" $ do
+      H.h2 "Password change"
+      case u of
+        (Just u) -> H.p "Password changed successfully!"
+        Nothing  -> H.p "You are not logged in"
+
+changePassFail :: Maybe User -> Html
+changePassFail u = baseHtml (Just "password change") $ do
+  H.head $ do
+    H.title "password change"
+  H.body $ do
+    H.header $ mainHeader
+    mainMenu u
+    H.div ! A.id "user-info" $ do
+      H.h2 "Password change"
+      case u of
+        (Just u) -> H.p "Password change unsuccessful. Please make sure your passwords match"
+        Nothing  -> H.p "You are not logged in"
 
