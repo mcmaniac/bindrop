@@ -16,6 +16,7 @@ import qualified Data.IxSet as IxSet
 import Data.SafeCopy        ( base, deriveSafeCopy )
 import Data.Time            ( UTCTime(..) )
 
+import Bindrop.State.Journal
 import Bindrop.State.UploadDB
 import Bindrop.State.Users
 

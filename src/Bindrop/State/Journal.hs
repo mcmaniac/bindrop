@@ -12,28 +12,37 @@ import qualified Data.IxSet as IxSet
 import Data.SafeCopy        ( base, deriveSafeCopy )
 import Data.Time            ( UTCTime(..) )
 
-data Journal = Journal { _acount :: Int --account count
-                       , _ucount :: Int --upload count
-                       , _dcount :: Int --download count
+newtype EntryID = EntryID {unEntryID :: Integer}
+  deriving (Eq, Ord, Show, Data, Enum, Typeable, Num)
+
+$(deriveSafeCopy 0 'base ''EntryID)
+
+data Journal = Journal { _entryID :: EntryID
+                       , _acount  :: Int --account count
+                       , _ucount  :: Int --upload count
+                       , _dcount  :: Int --download count
                        } deriving (Eq, Ord, Show, Data, Typeable)
 
 $(makeLenses ''Journal)
 
 $(deriveSafeCopy 0 'base ''Journal)
 
-inferIxSet "JournalDB" ''Journal 'noCalcs
-  [ ''Int
+inferIxSet "EntryDB" ''Journal 'noCalcs
+  [ ''EntryID
+  , ''Int
   , ''Int
   , ''Int
   ]
 
-data JournaldDB =
-  JournalDB { _entries :: JournalDB } deriving (Data, Typeable)
+data JournalDB =
+  JournalDB { _nextEntryID :: EntryID
+            , _entries     :: EntryDB
+            } deriving (Data, Typeable)
 
 $(makeLenses ''JournalDB)
 
 $(deriveSafeCopy 0 'base ''JournalDB)
 
-initialUploadDBState :: JournalDB
-initialUploadDBState = JournalDB 0 0 0
+initialJournalDBState :: JournalDB
+initialJournalDBState = JournalDB (EntryID 1) empty
 
