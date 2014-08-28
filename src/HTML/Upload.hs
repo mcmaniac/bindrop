@@ -15,7 +15,7 @@ import HTML.Base
 import HTML.Frames
 
 upload :: Maybe User -> FileUpload -> Html
-upload u f = baseHtml $ do
+upload u f = baseHtml (Just "file info") $ do
   H.head $ do
     H.title "File Information"
 
@@ -38,7 +38,7 @@ upload u f = baseHtml $ do
                 H.p (H.toHtml $ "Link: " ++ infoLink)
 
 myUploads :: Maybe User -> Html -> Html
-myUploads u userUploadList = baseHtml $ do
+myUploads u userUploadList = baseHtml (Just "my uploads") $ do
   H.head $ do
     H.title "my uploads"
   H.body $ do

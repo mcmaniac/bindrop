@@ -15,7 +15,7 @@ import HTML.Base
 import HTML.Frames
 
 viewDownload :: Maybe User -> FileUpload -> Html
-viewDownload u file = baseHtml $ do
+viewDownload u file = baseHtml (Just "download") $ do
   H.head $ do
     H.title "Download"
 

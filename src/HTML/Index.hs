@@ -11,9 +11,9 @@ import HTML.Frames
 import Bindrop.State.Users
 
 index :: Maybe User -> Html -> Html
-index u mostRecentUploadList = baseHtml $ do
+index u mostRecentUploadList = baseHtml (Just "home") $ do
   H.head $ do
-    H.title "bindrop"
+    H.title "home"
   H.body $ do
     H.header $ mainHeader
     mainMenu u

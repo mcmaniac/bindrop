@@ -13,7 +13,7 @@ import HTML.Base
 import HTML.Frames
 
 register :: Maybe User -> Html
-register u = baseHtml $ do
+register u = baseHtml (Just "register") $ do
   H.head $ do
     H.title "register"
   H.body $ do
@@ -42,7 +42,7 @@ register u = baseHtml $ do
           H.p "You already have an account"
 
 registrationSuccess :: User -> Html
-registrationSuccess u = baseHtml $ do
+registrationSuccess u = baseHtml (Just "registration successful!") $ do
   let username  = u ^. uName
   let userEmail = u ^. uEmail
   let userPass  = u ^. uPass
@@ -63,7 +63,7 @@ registrationSuccess u = baseHtml $ do
         " to return to the home page"
 
 registrationFail :: Html
-registrationFail = baseHtml $ do
+registrationFail = baseHtml (Just "registration failed") $ do
   H.head $ do
     H.title "registration failed"
   H.body $ do

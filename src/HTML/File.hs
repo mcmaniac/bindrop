@@ -79,7 +79,7 @@ uploadedFile mU file = toHtml $ do
 
 
 makePrivate :: FileUpload -> Maybe User -> Html
-makePrivate f u = baseHtml $ do
+makePrivate f u = baseHtml (Just "privacy") $ do
   H.head $ do
     H.title "privacy changed"
   H.body $ do

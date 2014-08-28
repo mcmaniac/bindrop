@@ -16,7 +16,7 @@ import HTML.Base
 import HTML.Frames
 
 loginPage :: Maybe User -> Html
-loginPage u = baseHtml $ do
+loginPage u = baseHtml (Just "login") $ do
   H.head $ do
     H.title "login"
   H.body $ do
@@ -48,7 +48,7 @@ loginPage u = baseHtml $ do
           H.p (H.toHtml $ "You are already logged in as " ++ userName)
 
 login :: Maybe User -> Html
-login u = baseHtml $ do
+login u = baseHtml (Just "login") $ do
   H.head $ do
     H.title "login"
   H.body $ do
@@ -68,7 +68,7 @@ login u = baseHtml $ do
       Nothing -> H.p "Login failed. Invalid username or password"
 
 logout :: Maybe User -> Html
-logout u = baseHtml $ do
+logout u = baseHtml (Just "logout") $ do
   H.head $ do
     H.title "logout"
   H.body $ do
@@ -86,7 +86,7 @@ logout u = baseHtml $ do
         Nothing -> H.p "You were never logged in."
 
 myAcct :: Maybe User -> Html
-myAcct u = baseHtml $ do
+myAcct u = baseHtml (Just "my account") $ do
   H.head $ do
     H.title "my account"
   H.body $ do

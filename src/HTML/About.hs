@@ -11,7 +11,7 @@ import HTML.Base
 import HTML.Frames
 
 about :: Maybe User -> Html
-about u = baseHtml $ do
+about u = baseHtml (Just "about us") $ do
   let gitLink = "https://github.com/mcmaniac/bindrop"
   H.head $ do
     H.title "About"

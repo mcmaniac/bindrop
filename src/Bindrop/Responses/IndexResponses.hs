@@ -30,8 +30,7 @@ indexMostRecent
 indexMostRecent acid u = do
   now <- liftIO $ getCurrentTime
   mostRecent <- query' acid (MostRecentUploads now)
-  ok $ toResponse $ baseHtml $ do
-    index u $ mapM_ recentUpload mostRecent
+  ok $ toResponse $ index u $ mapM_ recentUpload mostRecent
 
 indexPart :: Maybe User -> AcidState BindropState ->
   ClientSessionT SessionData (ServerPartT IO) Response

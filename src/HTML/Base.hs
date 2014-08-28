@@ -32,7 +32,8 @@ htmlHeader title cssFiles scripts =
       A.href ("http://fonts.googleapis.com/css?family=Ubuntu") !
       A.rel "stylesheet"
 
-baseHtml :: Html -> Html
-baseHtml content = docTypeHtml $ do
-  htmlHeader Nothing ["base.css"] []
+baseHtml :: Maybe String -> Html -> Html
+baseHtml title content = docTypeHtml $ do
+  htmlHeader title ["base.css"] []
   content
+
