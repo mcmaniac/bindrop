@@ -161,35 +161,51 @@ header {
 
 #register-form,
 #login-page,
-#pass-form {
-  display:           inline;
-  position:          absolute;
+#pass-form,
+#reset-form,
+#change-pass {
+  display:           inline-block;
+  position:          relative;
   margin:            0px 0px 0px 240px;
   padding-left:      10px;
   padding-bottom:    15px;
   padding-right:     32px;
 }
 
-#pass-form {
+#change-pass{
+  display: inline;
+}
+
+#reset-form{
+  margin: 0px;
+}
+
+#pass-form,
+#change-pass {
   top: 0px;
   width: 300px;
 }
 
-#pass-form p {
+#pass-form p,
+#change-pass p{
   font-weight: bold;
 }
 
 #register-form label,
 #login-page label,
-#pass-form label {
+#pass-form label,
+#reset-form label,
+#change-pass label {
   display:     inline-block;
-  width:       100px;
+  width:       120px;
   padding-bottom: 15px;
 }
 
 #register-form label input,
 #login-page label input,
-#pass-form label input {
+#pass-form label input,
+#reset-form label input,
+#change-pass label input {
   display: inline-block;
   padding-bottom: 15px;
 }

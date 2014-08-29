@@ -33,10 +33,17 @@ uRegisterPart :: AcidState BindropState ->
   ClientSessionT SessionData (ServerPartT IO) Response
 uRegisterPart acid = do
   method [GET, POST]
-  userName  <- look "username"
-  userEmail <- look "email"
-  passInput <- look "pass"
-  userPass  <- liftIO $ mkEncrypted $ C.pack passInput
+  userName    <- look "username"
+  userEmail   <- look "email"
+  userPhrase  <- look "phrase"
+  answerInput <- look "answer"
+  passInput   <- look "pass"
+  cPassInput  <- look "cpass"
+  userPass    <- liftIO $ mkEncrypted $ C.pack passInput
+  userAnswer  <- liftIO $ mkEncrypted $ C.pack answerInput
+
+  -- test that passwords are matching
+  let pMatch = passInput == cPassInput
 
   -- only accept unique usernames and emails
   mUserByName <- query' acid (UserByName userName)
@@ -44,8 +51,8 @@ uRegisterPart acid = do
   let areUnique = if (isUniqueUser mUserByName && isUniqueUser mUserByEmail)
                     then True
                     else False
-  case areUnique of
-    True -> do
+  if pMatch && areUnique
+    then do
       -- create new user
       user <- update' acid NewUser
       let uID = user ^. userID
@@ -56,17 +63,19 @@ uRegisterPart acid = do
       case mUser of
         (Just mUser) -> do
           method POST
-          let updatedUser = mUser & uName  .~ userName
-                                  & uEmail .~ userEmail
-                                  & uPass  .~ (getEncryptedPass userPass)
-                                  & count  .~ 0
+          let updatedUser = mUser & uName   .~ userName
+                                  & uEmail  .~ userEmail
+                                  & uPass   .~ (getEncryptedPass userPass)
+                                  & uPhrase .~ userPhrase
+                                  & uAnswer .~ (getEncryptedPass userAnswer)
+                                  & count   .~ 0
           _ <- update' acid (UpdateUser updatedUser)
           _ <- update' acid UpdateACount
           ok $ toResponse $ registrationSuccess updatedUser
 
         _ -> ok $ toResponse $ registrationFail
 
-    False -> ok $ toResponse $ registrationFail
+    else ok $ toResponse $ registrationFail
 
 loginPart :: AcidState BindropState ->
   ClientSessionT SessionData (ServerPartT IO) Response
@@ -124,11 +133,13 @@ updateUserCount acid f u = do
   case u of
     (Just u) -> do
       method POST
-      let updatedUser = u & userID .~ u ^. userID
-                          & uName  .~ u ^. uName
-                          & uEmail .~ u ^. uEmail
-                          & uPass  .~ u ^. uPass
-                          & count  %~ succ
+      let updatedUser = u & userID  .~ u ^. userID
+                          & uName   .~ u ^. uName
+                          & uEmail  .~ u ^. uEmail
+                          & uPass   .~ u ^. uPass
+                          & uPhrase .~ u ^. uPhrase
+                          & uAnswer .~ u ^. uAnswer
+                          & count   %~ succ
       _ <- update' acid (UpdateUser updatedUser)
 
       -- update cookie
@@ -156,11 +167,13 @@ changePassPart acid u = do
 
       if match && newPassesMatch
         then do
-          let updatedUser = u & userID .~ u ^. userID
-                              & uName  .~ u ^. uName
-                              & uEmail .~ u ^. uEmail
-                              & uPass  .~ (getEncryptedPass newUserPass)
-                              & count  .~ u ^. count
+          let updatedUser = u & userID  .~ u ^. userID
+                              & uName   .~ u ^. uName
+                              & uEmail  .~ u ^. uEmail
+                              & uPass   .~ (getEncryptedPass newUserPass)
+                              & uPhrase .~ u ^. uPhrase
+                              & uAnswer .~ u ^. uAnswer
+                              & count   .~ u ^. count
           _ <- update' acid (UpdateUser updatedUser)
 
           -- update cookie
@@ -170,4 +183,57 @@ changePassPart acid u = do
         else ok $ toResponse $ changePassFail (Just u)
 
     Nothing -> ok $ toResponse $ changePassFail Nothing
+
+lostPassPart
+  :: AcidState BindropState
+  -> Maybe User
+  -> ClientSessionT SessionData (ServerPartT IO) Response
+lostPassPart acid u = do
+  case u of
+    (Just u) -> ok $ toResponse $ lostPassReset (Just u) ""
+
+    Nothing -> do
+      username <- look "username"
+      user <- query' acid (UserByName username)
+      case user of
+        (Just user) -> do
+          let phrase = user ^. uPhrase
+          ok $ toResponse $ lostPassReset u phrase
+
+        Nothing -> ok $ toResponse $ lostPassFail Nothing
+
+resetPassPart
+  :: AcidState BindropState
+  -> Maybe User
+  -> ClientSessionT SessionData (ServerPartT IO) Response
+resetPassPart acid u = do
+  case u of
+    (Just u) -> ok $ toResponse $ lostPassFail Nothing
+    Nothing  -> do
+      email  <- look "email"
+      answer <- look "answer"
+      passInput  <- look "pass"
+      cPassInput <- look "cpass"
+      let answerInput = Pass $ C.pack answer
+      user   <- query' acid (UserByEmail email)
+      case user of
+        (Just user) -> do
+          let passMatch = passInput == cPassInput
+          let match = verifyPass' answerInput $ EncryptedPass (user ^. uAnswer)
+          if passMatch && match
+            then do
+              newUserPass <- liftIO $ mkEncrypted $ C.pack passInput
+              let updatedUser = user & userID  .~ user ^. userID
+                                     & uName   .~ user ^. uName
+                                     & uEmail  .~ user ^. uEmail
+                                     & uPass   .~ (getEncryptedPass newUserPass)
+                                     & uPhrase .~ user ^. uPhrase
+                                     & uAnswer .~ user ^. uAnswer
+                                     & count   .~ user ^. count
+              _ <- update' acid (UpdateUser updatedUser)
+              ok $ toResponse $ lostPassSuccess Nothing
+
+            else ok $ toResponse $ lostPassFail Nothing
+
+        Nothing -> ok $ toResponse $ lostPassFail Nothing
 

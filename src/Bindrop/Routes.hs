@@ -52,6 +52,15 @@ mainRoute acid = do
           , do -- logout
             dirs "u/logout" $ logoutPart mU
 
+          , do -- process reset password request
+            dirs "u/lost-password/r" $ resetPassPart acid mU
+
+          , do -- lost password reset form
+            dirs "u/lost-password/f" $ lostPassPart acid mU
+
+          , do --lost password initial page (asks for username)
+            dirs "u/lost-password" $ ok $ toResponse $ lostPassInitial mU
+
           , do -- process registration
             dirs "u/r/process" $ uRegisterPart acid
 

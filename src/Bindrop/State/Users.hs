@@ -17,11 +17,13 @@ newtype UserID = UserID {unUserID :: Integer}
 
 $(deriveSafeCopy 0 'base ''UserID)
 
-data User = User { _userID :: UserID
-                 , _uName  :: String --user name
-                 , _uEmail :: String --user email
-                 , _uPass  :: B.ByteString --user password
-                 , _count  :: Int --upload count for stats
+data User = User { _userID  :: UserID
+                 , _uName   :: String --user name
+                 , _uEmail  :: String --user email
+                 , _uPass   :: B.ByteString --user password
+                 , _uPhrase :: String --user passphrase for account recovery
+                 , _uAnswer :: B.ByteString --answer to passphrase
+                 , _count   :: Int --upload count for stats
                  } deriving (Eq, Ord, Show, Data, Typeable)
 
 $(makeLenses ''User)
@@ -31,6 +33,8 @@ $(deriveSafeCopy 0 'base ''User)
 inferIxSet "UserDB" ''User 'noCalcs
   [ ''UserID
   , ''String
+  , ''String
+  , ''B.ByteString
   , ''String
   , ''B.ByteString
   , ''Int

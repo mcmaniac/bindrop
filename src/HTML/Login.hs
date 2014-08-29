@@ -42,6 +42,10 @@ loginPage u = baseHtml (Just "login") $ do
             "Don't have an account yet? "
             a ! href ("/u/r") $ "Register"
             " here."
+          H.p $ do
+            "Forgot your password? "
+            a ! href ("/u/lost-password") $ "Reset"
+            " it here."
       (Just u) -> do
         let userName = u ^. uName
         H.div ! A.id "user-info" $ do
@@ -105,7 +109,7 @@ myAcct u = baseHtml (Just "my account") $ do
           H.p (H.toHtml $ userName)
           H.p (H.toHtml $ userEmail)
           H.p (H.toHtml $ show uploadCount ++ " uploads")
-          H.div ! A.id "pass-form" $ do
+          H.div ! A.id "change-pass" $ do
             H.form ! action "/u/m/p"
                    ! A.method "post" $ do
               H.p "Change your password"
@@ -152,4 +156,93 @@ changePassFail u = baseHtml (Just "password change") $ do
       case u of
         (Just u) -> H.p "Password change unsuccessful. Please make sure your passwords match"
         Nothing  -> H.p "You are not logged in"
+
+lostPassInitial :: Maybe User -> Html
+lostPassInitial u = baseHtml (Just "lost password") $ do
+  H.head $ do
+    H.title "lost password"
+  H.body $ do
+    H.header $ mainHeader
+    mainMenu u
+    H.div ! A.id "user-info" $ do
+      H.h2 "Reset password"
+      case u of
+        (Just u) -> H.p "You are already logged in"
+
+        Nothing -> do
+          H.div ! A.id "reset-form" $ do
+            H.form ! action "/u/lost-password/f"
+                   ! A.method "post" $ do
+              H.p "What is your username?"
+              H.label "Username: " >> input ! A.type_ "text"
+                                            ! A.name "username"
+              H.br
+              --submit button
+              input ! type_ "submit"
+                    ! name "resetPass"
+                    ! value "Submit"
+
+
+lostPassReset :: Maybe User -> String -> Html
+lostPassReset u phrase = baseHtml (Just "reset password") $ do
+  H.head $ do
+    H.title "reset password"
+  H.body $ do
+    H.header $ mainHeader
+    mainMenu u
+    H.div ! A.id "user-info" $ do
+      H.h2 "Reset password"
+      case u of
+        (Just u) -> H.p "You are already logged in"
+
+        Nothing -> do -- present the reset form: email, phrase, answer
+          H.div ! A.id "reset-form" $ do
+            H.form ! action "/u/lost-password/r"
+                   ! A.method "post" $ do
+              H.p "Reset your password"
+              H.br
+              H.label "Email: " >> input ! A.type_ "text"
+                                         ! A.name "email"
+              H.br
+              H.label (H.toHtml phrase) >> input ! A.type_ "text"
+                                                 ! A.name "answer"
+              H.br
+              H.label "New password: " >> input ! A.type_ "password"
+                                                ! A.name "pass"
+              H.br
+              H.label "Confirm new password: " >> input ! A.type_ "password"
+                                                        ! A.name "cpass"
+              H.br
+
+              --submit button
+              input ! type_ "submit"
+                    ! name "resetPass"
+                    ! value "Reset"
+
+
+lostPassSuccess :: Maybe User -> Html
+lostPassSuccess u = baseHtml (Just "password reset") $ do
+  H.head $ do
+    H.title "reset password"
+  H.body $ do
+    H.header $ mainHeader
+    mainMenu u
+    H.div ! A.id "user-info" $ do
+      case u of
+        (Just u) -> H.p "You are already logged in."
+
+        Nothing -> H.p "Password reset successful!"
+
+lostPassFail :: Maybe User -> Html
+lostPassFail u = baseHtml (Just "password reset") $ do
+  H.head $ do
+    H.title "reset password"
+  H.body $ do
+    H.header $ mainHeader
+    mainMenu u
+    H.div ! A.id "user-info" $ do
+      case u of
+        (Just u) -> H.p "You are already logged in."
+
+        Nothing -> H.p "Password reset failed"
 

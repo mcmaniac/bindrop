@@ -23,6 +23,7 @@ register u = baseHtml (Just "register") $ do
       Nothing -> do
         H.div ! A.id "register-form" $ do
           H.h2 "Register a new user"
+          H.p "Please provide a valid e-mail address. It will be used to help confirm your identity in the case of a password reset."
           H.form ! action "r/process"
                  ! A.method "post" $ do
                    H.label "Username: " >> input ! A.type_ "text"
@@ -31,8 +32,17 @@ register u = baseHtml (Just "register") $ do
                    H.label "E-mail: "   >> input ! A.type_ "text"
                                                  ! A.name "email"
                    H.br
+                   H.label "Recovery question: " >> input ! A.type_ "text"
+                                                          ! A.name "phrase"
+                   H.br
+                   H.label "Answer: " >> input ! A.type_ "text"
+                                               ! A.name "answer"
+                   H.br
                    H.label "Password: " >> input ! A.type_ "password"
                                                  ! A.name "pass"
+                   H.br
+                   H.label "Confirm password: " >> input ! A.type_ "password"
+                                                         ! A.name "cpass"
                    H.br
                    input ! type_ "submit"
                          ! name "register"
@@ -71,7 +81,7 @@ registrationFail = baseHtml (Just "registration failed") $ do
     mainMenu Nothing
     H.div ! A.id "user-info" $ do
       H.h2 "Registration failed"
-      H.p "Registration failed. Username and e-mail must be unique. "
+      H.p "Registration failed. Username and e-mail must be unique. Passwords must also match. "
       H.p $ do
         "Click "
         a ! href ("/") $ "here"

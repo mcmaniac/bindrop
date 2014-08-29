@@ -20,5 +20,5 @@ extractUser :: Maybe User -> User
 extractUser u =
   case u of
     (Just u) -> u
-    Nothing  -> User 0 "" "" (C.pack "") 0
+    Nothing  -> User 0 "" "" (C.pack "") "" (C.pack "") 0
 
