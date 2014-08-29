@@ -34,7 +34,7 @@ about u  j = baseHtml (Just "about us") $ do
             " on github"
 
       H.br
-      H.h2 "Statistics"
+      H.h2 "bindrop statistics"
 
       case j of
         (Just j) -> do
