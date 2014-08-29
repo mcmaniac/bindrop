@@ -25,7 +25,7 @@ upload u f = baseHtml (Just "file info") $ do
             let fileName = file ^. fname
             let fileTime = file ^. uploadTime
             let privacy  = file ^. public
-            let infoLink = "localhost:8082/f/" ++ file ^. sfname
+            let infoLink = "bindrop.de/f/" ++ file ^. sfname
 
             H.body $ do
               H.header $ mainHeader

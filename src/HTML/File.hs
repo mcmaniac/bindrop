@@ -20,7 +20,7 @@ recentUpload file = toHtml $ do
   let fileTime = file ^. uploadTime
   let counter  = file ^. dlCount
   let dlLink   = "/s/" ++ file ^. sfname
-  let infoLink = "localhost:8082/f/" ++ file ^. sfname
+  let infoLink = "bindrop.de/f/" ++ file ^. sfname
 
   H.div ! A.id "uploadInfo" $ do
     H.p $ do
@@ -39,7 +39,7 @@ uploadedFile mU file = toHtml $ do
   let fileTime = file ^. uploadTime
   let counter  = file ^. dlCount
   let dlLink   = "/s/" ++ file ^. sfname
-  let infoLink = "localhost:8082/f/" ++ file ^. sfname
+  let infoLink = "bindrop.de/f/" ++ file ^. sfname
   let uploader = unUserName $ file ^. userName
   let userName = mU ^. uName
   let privacyStatus = file ^. public
