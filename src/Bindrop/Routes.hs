@@ -23,7 +23,7 @@ import HTML.Register
 import qualified HTML.Error as Error
 
 myPolicy :: BodyPolicy
-myPolicy = (defaultBodyPolicy "/tmp/" (10*10^(6 :: Int)) 1000 1000)
+myPolicy = (defaultBodyPolicy "/tmp/" (10*10^(7 :: Int)) 1000 1000)
 
 mainRoute :: AcidState BindropState
   -> ClientSessionT SessionData (ServerPartT IO) Response
