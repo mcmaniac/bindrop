@@ -2,16 +2,18 @@
 
 module HTML.About where
 
+import Control.Lens.Operators ( (^.) )
 import Text.Blaze.Html
 import Text.Blaze.Html5 as H
 import Text.Blaze.Html5.Attributes as A
 
+import Bindrop.State.Journal
 import Bindrop.State.Users
 import HTML.Base
 import HTML.Frames
 
-about :: Maybe User -> Html
-about u = baseHtml (Just "about us") $ do
+about :: Maybe User -> Maybe Journal -> Html
+about u  j = baseHtml (Just "about us") $ do
   let gitLink = "https://github.com/mcmaniac/bindrop"
   H.head $ do
     H.title "About"
@@ -30,4 +32,19 @@ about u = baseHtml (Just "about us") $ do
       H.p $ do
             a ! href (gitLink) $ "bindrop"
             " on github"
+
+      H.br
+      H.h2 "Statistics"
+
+      case j of
+        (Just j) -> do
+          let totalUploads   = j ^. ucount
+          let totalDownloads = j ^. dcount
+          let totalUsers     = j ^. acount
+
+          H.p (H.toHtml $ show totalUploads ++ " uploads")
+          H.p (H.toHtml $ show totalDownloads ++ " downloads")
+          H.p (H.toHtml $ show totalUsers ++ " users")
+
+        Nothing -> H.p "No statistics to report"
 

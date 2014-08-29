@@ -61,6 +61,7 @@ uRegisterPart acid = do
                                   & uPass  .~ (getEncryptedPass userPass)
                                   & count  .~ 0
           _ <- update' acid (UpdateUser updatedUser)
+          _ <- update' acid UpdateACount
           ok $ toResponse $ registrationSuccess updatedUser
 
         _ -> ok $ toResponse $ registrationFail

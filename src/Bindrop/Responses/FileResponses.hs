@@ -60,6 +60,7 @@ spart acid s = do
                                & userName    .~ dlfile ^. userName
                                & dlCount     %~ succ
       _ <- update' acid (UpdateUpload updatedFile)
+      _ <- update' acid UpdateDCount
 
       response <- serveFile (guessContentTypeM mimeTypes) filepath
       return $ setHeader "Content-Disposition"
@@ -123,6 +124,7 @@ handleFile mU acid u = do
                               & userName     .~ username
 
       _ <- update' acid (UpdateUpload updatedFile)
+      _ <- update' acid UpdateUCount
 
       updateUserCount acid updatedFile mU
 

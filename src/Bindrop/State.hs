@@ -41,6 +41,11 @@ initialBindropState = BindropState (initialUploadDBState)
   (initialUsersState) (initialJournalState)
 
 --Journal
+retrieveJournal :: Query BindropState (Maybe Journal)
+retrieveJournal = do
+  db <- ask
+  return $ Just $ db ^. journal
+
 updateDCount :: Update BindropState ()
 updateDCount = do
   j <- get
@@ -145,6 +150,7 @@ $(makeAcidic ''BindropState
   [ 'updateDCount
   , 'updateUCount
   , 'updateACount
+  , 'retrieveJournal
   , 'newUpload
   , 'updateUpload
   , 'fileByID

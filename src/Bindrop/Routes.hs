@@ -5,12 +5,14 @@ import Control.Monad.IO.Class
 import Control.Lens.Operators
 
 import Data.Acid
+import Data.Acid.Advanced ( query' )
 
 import Happstack.Server
 import Happstack.Server.ClientSession
 
 import Bindrop.Session
 import Bindrop.State
+import Bindrop.State.Journal
 import Bindrop.Responses.IndexResponses
 import Bindrop.Responses.FileResponses
 import Bindrop.Responses.UserResponses
@@ -28,6 +30,8 @@ mainRoute :: AcidState BindropState
 mainRoute acid = do
   s <- getSession
   let mU = s ^. sessionUser
+
+  j <- query' acid RetrieveJournal
 
   do decodeBody myPolicy
      msum [ indexPart mU acid -- update index with file uploads
@@ -70,7 +74,7 @@ mainRoute acid = do
             dir "u" $ ok $ toResponse $ loginPage mU
 
           , do -- about page
-            dir "a" $ ok $ toResponse $ about mU
+            dir "a" $ ok $ toResponse $ about mU j
 
           , do -- server files from "/static/"
             dir "static" $ serveDirectory DisableBrowsing [] "static"
