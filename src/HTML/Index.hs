@@ -26,9 +26,9 @@ index u mostRecentUploadList = baseHtml (Just "home") $ do
           H.form ! enctype "multipart/form-data"
                  ! action "/"
                  ! A.method "post" $ do
-            H.label "Upload a file: " >> input ! A.type_ "file"
-                                               ! A.name "fileUpload"
-                                               ! A.size "50"
+            input ! A.type_ "file"
+                  ! A.name "fileUpload"
+                  ! A.size "50"
 
             H.br
 
