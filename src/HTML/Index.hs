@@ -21,7 +21,7 @@ index u mostRecentUploadList = baseHtml (Just "home") $ do
       (Just u) -> do
         H.div ! A.id "new-upload" $ do
           H.h2 "New Upload:"
-          H.p ! A.id "info-upload" $ "10^8 byte maximum allowed file size"
+          H.p ! A.id "info-upload" $ "10^8 bytes maximum allowed file size"
           -- upload form
           H.form ! enctype "multipart/form-data"
                  ! action "/"
