@@ -20,7 +20,7 @@ index u mostRecentUploadList = baseHtml (Just "home") $ do
     case u of
       (Just u) -> do
         H.div ! A.id "new-upload" $ do
-          H.h2 "New Upload:"
+          H.h2 "New upload"
           H.p ! A.id "info-upload" $ "10^8 bytes maximum allowed file size"
           -- upload form
           H.form ! enctype "multipart/form-data"
@@ -48,6 +48,6 @@ index u mostRecentUploadList = baseHtml (Just "home") $ do
 
     H.div ! A.id "recent" $ do
       H.br
-      H.h2 "Recent Uploads:"
+      H.h2 "Recent uploads"
       mostRecentUploadList
 
