@@ -92,8 +92,8 @@ header {
 }
 
 #recent {
-  display:           inline;
-  position:          absolute;
+  display:           inline-block;
+  position:          relative;
   margin:            150px 0px 0px 240px;
   padding-left:      10px;
 }
@@ -123,27 +123,13 @@ header {
   box-shadow: 3px 3px 10px #666;
 }
 
-#uploadInfo ul {
-  margin: 0px;
-  padding: 4px;
-  width: 300px;
-  display: inline-block;
-  list-style-type: none;
+#uploadInfo p {
+  width: 70%;
+  word-wrap: break-word;
 }
 
 #uploadInfo a {
   color: DarkRed;
-}
-
-#uploadInfo ul li {
-  display: inline-block;
-  width: 300px;
-  margin: 2px;
-}
-
-#uploadInfo form input[type=submit] {
-  display: inline-block;
-  margin-left: 533px;
 }
 
 #dl-counter-recent {
@@ -151,6 +137,8 @@ header {
   position: relative;
   top: -35px;
   float: right;
+  width: 100%;
+  left: 80%;
 }
 
 #dl-counter-user {
@@ -158,6 +146,10 @@ header {
   position: relative;
   float: right;
   float: top;
+  width: 100%;
+  left: 80%;
+  top: 100px;
+  margin-top: -100px;
 }
 
 #privacyButton {
