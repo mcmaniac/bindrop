@@ -58,6 +58,7 @@ header {
 #mainMenu {
   float:            left;
   border-radius:    5px;
+  font-size:        12px;
   background-color: #666;
   position:         fixed;
   margin:           125px 20px auto;
