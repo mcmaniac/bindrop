@@ -1,6 +1,6 @@
 h1 {
   font-family: 'Ubuntu', sans-serif;
-  font-size:   32px;
+  font-size:   24px;
   text-align:  center;
   color:       DimGray;
 }
@@ -13,7 +13,7 @@ h2 {
 
 span {
   font-family: 'Ubuntu', sans-serif;
-  font-size:   32px;
+  font-size:   24px;
   color:       DarkRed;
 }
 
@@ -114,7 +114,7 @@ header {
 #uploadInfo {
   background-color: #999;
   border: 1px solid #666;
-  width: 650px;
+  width: 350px;
   padding: 5px;
   margin-bottom: 16px;
   border-radius: 3px;
