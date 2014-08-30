@@ -208,7 +208,7 @@ resetPassPart
   -> ClientSessionT SessionData (ServerPartT IO) Response
 resetPassPart acid u = do
   case u of
-    (Just u) -> ok $ toResponse $ lostPassFail Nothing
+    (Just u) -> ok $ toResponse $ lostPassFail (Just u)
     Nothing  -> do
       email  <- look "email"
       answer <- look "answer"
