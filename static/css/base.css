@@ -84,7 +84,7 @@ header {
 
 #new-upload,
 #user-uploads {
-  display:           block;
+  display:           inline-block;
   position:          absolute;
   margin:            0px 0px 0px 240px;
   padding-left:      10px;
@@ -93,8 +93,8 @@ header {
 
 #recent {
   display:           inline-block;
-  position:          relative;
-  margin:            150px 0px 0px 240px;
+  position:          absolute;
+  margin:            160px 0px 0px 240px;
   padding-left:      10px;
 }
 
