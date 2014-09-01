@@ -77,15 +77,15 @@ makePrivatePart acid fName = do
   f <- query' acid (FileBySName fName)
   case f of
     (Just f) -> do
-                method POST
-                let currentPrivacy = f ^. public
-                let updatedFile = f & public .~ not currentPrivacy
-                s <- getSession
-                let mU = s ^. sessionUser
+      method POST
+      let currentPrivacy = f ^. public
+      let updatedFile = f & public .~ not currentPrivacy
+      s <- getSession
+      let mU = s ^. sessionUser
 
-                _ <- update' acid (UpdateUpload updatedFile)
+      _ <- update' acid (UpdateUpload updatedFile)
 
-                ok $ toResponse $ makePrivate updatedFile mU
+      ok $ toResponse $ makePrivate updatedFile mU
 
     _ -> mzero -- FIXME
 
