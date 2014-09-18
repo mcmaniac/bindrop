@@ -96,12 +96,13 @@ handleFile
   -> (FilePath, FilePath, ContentType)
   -> ClientSessionT SessionData (ServerPartT IO) Response
 handleFile mU acid u = do
-  let uname = u^._2
+  --move the file from temp dir to bindrop
   let uPath = u^._1
   newName <- liftIO $ moveToRandomFile uploadDir 11 uPath
-  let vName = uname
-  let vPath = newName
-  let vSName = drop (length uploadDir) vPath
+
+  let fileName = u^._2
+  let filePath = newName
+  let sFileName = drop (length uploadDir) filePath
 
   --uploader's user name
   let username = UserName $ (extractUser mU) ^. uName
@@ -118,9 +119,9 @@ handleFile mU acid u = do
   case mFile of
     (Just mFile) -> do
       method POST
-      let updatedFile = mFile & fpath        .~ vPath
-                              & fname        .~ vName
-                              & sfname       .~ vSName
+      let updatedFile = mFile & fpath        .~ filePath
+                              & fname        .~ fileName
+                              & sfname       .~ sFileName
                               & uploadTime   .~ t
                               & userName     .~ username
 
