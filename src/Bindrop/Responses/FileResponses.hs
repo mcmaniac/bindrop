@@ -2,6 +2,7 @@ module Bindrop.Responses.FileResponses where
 
 import Control.Monad
 import Control.Monad.IO.Class
+import Control.Lens
 import Control.Lens.Operators
 
 import Data.Acid
@@ -95,8 +96,8 @@ handleFile
   -> (FilePath, FilePath, ContentType)
   -> ClientSessionT SessionData (ServerPartT IO) Response
 handleFile mU acid u = do
-  let uname = getFileName u
-  let uPath = getFilePath u
+  let uname = u^._2
+  let uPath = u^._1
   newName <- liftIO $ moveToRandomFile uploadDir 11 uPath
   let vName = uname
   let vPath = newName

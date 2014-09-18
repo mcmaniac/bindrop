@@ -28,9 +28,3 @@ moveToRandomFile dir len file = do
   renameFile file new_file
   return new_file
 
-getFilePath :: (FilePath, FilePath, ContentType) -> FilePath
-getFilePath (fp, _, _) = fp
-
-getFileName :: (FilePath, FilePath, ContentType) -> FilePath
-getFileName (_, name, _) = name
-

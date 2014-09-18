@@ -2,6 +2,7 @@ module Bindrop.Responses.IndexResponses where
 
 import Control.Monad
 import Control.Monad.IO.Class
+import Control.Lens
 import Control.Lens.Operators
 
 import Data.Acid
@@ -19,7 +20,7 @@ import Bindrop.Responses.FileResponses
 
 import HTML.Base
 import HTML.File
-import HTML.Index
+import qualified HTML.Index as H
 
 import Utils.FileUtils
 
@@ -30,14 +31,14 @@ indexMostRecent
 indexMostRecent acid u = do
   now <- liftIO $ getCurrentTime
   mostRecent <- query' acid (MostRecentUploads now)
-  ok $ toResponse $ index u $ mapM_ recentUpload mostRecent
+  ok $ toResponse $ H.index u $ mapM_ recentUpload mostRecent
 
 indexPart :: Maybe User -> AcidState BindropState ->
   ClientSessionT SessionData (ServerPartT IO) Response
 indexPart mU acid = do
   method [GET, POST]
   u <- lookFile "fileUpload"
-  let uName = getFileName u
+  let uName = u^._2
   case uName of
     "" -> indexMostRecent acid mU  --no file was selected on the form
     _  -> handleFile mU acid u
